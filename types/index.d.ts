@@ -5,6 +5,11 @@ export interface SidebarLink {
   route: string;
   label: string;
 }
+export interface Tag {
+  _id: number;
+  name: string;
+  totalPosts: number;
+}
 
 export interface Job {
   id?: string;
