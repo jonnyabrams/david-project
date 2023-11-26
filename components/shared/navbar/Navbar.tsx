@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import MobileNav from "./MobileNav";
 import Theme from "./Theme";
+import GlobalSearch from "../search/GlobalSearch";
 
 const Navbar = () => {
   return (
@@ -20,7 +21,9 @@ const Navbar = () => {
           ShareOur<span className="text-primary-500">Best</span>
         </p>
       </Link>
-      GlobalSearch
+
+      <GlobalSearch />
+      
       <div className="flex-between gap-5">
         <Theme />
         <SignedIn>
