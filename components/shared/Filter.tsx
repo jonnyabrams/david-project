@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface Props {
+interface FilterProps {
   filters: {
     name: string;
     value: string;
@@ -18,7 +18,7 @@ interface Props {
   containerClasses?: string;
 }
 
-const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
+const Filter = ({ filters, otherClasses, containerClasses }: FilterProps) => {
   return (
     <div className={`relative ${containerClasses}`}>
       <Select>

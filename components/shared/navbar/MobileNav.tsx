@@ -34,7 +34,7 @@ const NavContent = () => {
               } flex items-center justify-start gap-4 bg-transparent p-4`}
             >
               <Image
-                src={item.imgURL}
+                src={item.imgUrl}
                 alt={item.label}
                 width={20}
                 height={20}

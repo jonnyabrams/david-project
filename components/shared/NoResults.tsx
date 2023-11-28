@@ -1,15 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import { Button } from "../ui/button";
 
-interface Props {
+interface NoResultsProps {
   title: string;
   description: string;
   link: string;
   buttonText: string;
 }
 
-const NoResults = ({ title, description, link, buttonText }: Props) => {
+const NoResults = ({ title, description, link, buttonText }: NoResultsProps) => {
   return (
     <div className="mt-10 flex w-full flex-col items-center justify-center">
       <Image

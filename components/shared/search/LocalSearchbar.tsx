@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 
-interface Props {
+interface LocalSearchbarProps {
   route: string;
   iconPosition: string;
   imgSrc: string;
@@ -17,7 +17,7 @@ const LocalSearchbar = ({
   imgSrc,
   placeholder,
   otherClasses,
-}: Props) => {
+}: LocalSearchbarProps) => {
   return (
     <div
       className={`background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}

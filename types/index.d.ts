@@ -1,14 +1,45 @@
 import { BADGE_CRITERIA } from "@/constants";
 
 export interface SidebarLink {
-  imgURL: string;
+  imgUrl: string;
   route: string;
   label: string;
 }
 export interface Tag {
-  _id: number;
+  _id: string;
   name: string;
   totalPosts: number;
+}
+
+export interface User {
+  _id: string;
+  email?: string;
+  salutation: string;
+  firstName: string;
+  surname: string;
+  picture: string;
+  trust?: string;
+  specialty?: string;
+  subspecialty?: string;
+  bio?: string;
+}
+
+export interface Comment {
+  _id: string;
+  user: User;
+  content: string;
+  postId: number;
+}
+
+export interface Post {
+  _id: string;
+  title: string;
+  tags: Tag[];
+  user: User;
+  upvotes: number;
+  views: number;
+  comments: Comment[];
+  createdAt: Date;
 }
 
 export interface Job {
