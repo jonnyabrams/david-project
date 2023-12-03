@@ -15,6 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 import { PostSchema } from "@/lib/validations";
 
 const PostForm = () => {
@@ -71,10 +73,12 @@ const PostForm = () => {
               <FormLabel className="paragraph-semibold text-dark400_light800">
                 Content <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl className="mt-3.5"></FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
-                Share your best!
-              </FormDescription>
+              <FormControl className="mt-3.5">
+                <Textarea
+                  placeholder="Share your best..."
+                  className="no-focus paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 min-h-[126px] border"
+                />
+              </FormControl>
               <FormMessage className="text-red-500" />
             </FormItem>
           )}
