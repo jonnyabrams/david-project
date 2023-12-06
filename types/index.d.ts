@@ -34,7 +34,7 @@ export interface Comment {
 export interface Post {
   _id: string;
   title: string;
-  tags: Tag[];
+  tags: string[];
   user: User;
   upvotes: number;
   views: number;
