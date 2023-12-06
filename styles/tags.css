@@ -52,8 +52,6 @@
   padding: 0.375rem 0.5rem;
   border: 0;
   border-radius: 3px;
-  background: white;
-  color: #3A3B3C;
   /* match the font styles */
   font-size: inherit;
   line-height: inherit;
@@ -124,6 +122,7 @@
 
 .react-tags__listbox-option {
   padding: 0.375rem 0.5rem;
+  color: black;
 }
 
 .react-tags__listbox-option:hover {
