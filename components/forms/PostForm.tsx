@@ -21,10 +21,11 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { PostSchema } from "@/lib/validations";
 import tagSuggestions from "@/constants/tagSuggestions";
-import '@/styles/tags.css'
+import "@/styles/tags.css";
 
 const PostForm = () => {
   const [selectedTags, setSelectedTags] = useState<any[]>([]);
+  const [tooManyTags, setTooManyTags] = useState(false);
 
   const form = useForm<z.infer<typeof PostSchema>>({
     resolver: zodResolver(PostSchema),
@@ -32,20 +33,33 @@ const PostForm = () => {
       title: "",
       content: "",
       tags: [],
-    } ,
+    },
   });
+
+  console.log(form.getValues().tags);
 
   const onAddTag = useCallback(
     (newTag: any) => {
-      form.setValue("tags", [...form.getValues().tags, newTag]);
-      setSelectedTags([...selectedTags, newTag]);
+      if (selectedTags.length < 3) {
+        form.setValue("tags", [...form.getValues().tags, newTag]);
+        setSelectedTags([...selectedTags, newTag]);
+      } else {
+        setTooManyTags(true);
+      }
     },
     [form, selectedTags]
   );
 
   const onDeleteTag = useCallback(
     (tagIndex: number) => {
-      const updatedTags = form.getValues().tags.filter((_, i) => i !== tagIndex);
+      if (selectedTags.length === 3) {
+        setTooManyTags(false);
+      }
+
+      const updatedTags = form
+        .getValues()
+        .tags.filter((_, i) => i !== tagIndex);
+
       form.setValue("tags", updatedTags);
       setSelectedTags(updatedTags);
     },
@@ -124,26 +138,32 @@ const PostForm = () => {
                   noOptionsText="No matching tags"
                   labelText=""
                   classNames={{
-                    root: 'react-tags background-light700_dark300 light-border-2 text-dark300_light700 min-h-[56px] border',
-                    rootIsActive: 'is-active',
-                    rootIsDisabled: 'is-disabled',
-                    rootIsInvalid: 'is-invalid',
-                    label: 'react-tags__label',
-                    tagList: 'react-tags__list',
-                    tagListItem: 'react-tags__list-item',
-                    tag: 'react-tags__tag',
-                    tagName: 'react-tags__tag-name',
-                    comboBox: 'react-tags__combobox',
-                    input: 'react-tags__combobox-input',
-                    listBox: 'react-tags__listbox',
-                    option: 'react-tags__listbox-option',
-                    optionIsActive: 'is-active',
-                    highlight: 'react-tags__listbox-option-highlight',
+                    root: "react-tags background-light700_dark300 light-border-2 text-dark300_light700 min-h-[56px] border",
+                    rootIsActive: "is-active",
+                    rootIsDisabled: "is-disabled",
+                    rootIsInvalid: "is-invalid",
+                    label: "react-tags__label",
+                    tagList: "react-tags__list",
+                    tagListItem: "react-tags__list-item",
+                    tag: "react-tags__tag",
+                    tagName: "react-tags__tag-name",
+                    comboBox: "react-tags__combobox",
+                    input: "react-tags__combobox-input",
+                    listBox: "react-tags__listbox",
+                    option: "react-tags__listbox-option",
+                    optionIsActive: "is-active",
+                    highlight: "react-tags__listbox-option-highlight",
                   }}
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Add up to 3 relevant tags
+                {tooManyTags ? (
+                  <span className="text-red-500">
+                    Maximum of 3 tags allowed!
+                  </span>
+                ) : (
+                  "Add up to 3 relevant tags"
+                )}
               </FormDescription>
               <FormMessage className="text-red-500" />
             </FormItem>
