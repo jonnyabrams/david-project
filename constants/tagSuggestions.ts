@@ -1,16 +1,29 @@
 const tagSuggestions = [
-  {
-    value: "tag 1",
-    label: "tag 1",
-  },
-  {
-    value: "tag 2",
-    label: "tag 2",
-  },
-  {
-    value: "tag 3",
-    label: "tag 3",
-  },
+  { value: "Anaesthetics", label: "Anaesthetics" },
+  { value: "Cardiology", label: "Cardiology" },
+  { value: "Dermatology", label: "Dermatology" },
+  { value: "Endocrinology", label: "Endocrinology" },
+  { value: "Gastroenterology", label: "Gastroenterology" },
+  { value: "General Practice (GP)", label: "General Practice (GP)" },
+  { value: "Haematology", label: "Haematology" },
+  { value: "Immunology", label: "Immunology" },
+  { value: "Infectious Diseases", label: "Infectious Diseases" },
+  { value: "Nephrology", label: "Nephrology" },
+  { value: "Neurology", label: "Neurology" },
+  { value: "Obstetrics and Gynaecology", label: "Obstetrics and Gynaecology" },
+  { value: "Oncology", label: "Oncology" },
+  { value: "Ophthalmology", label: "Ophthalmology" },
+  { value: "Orthopaedics", label: "Orthopaedics" },
+  { value: "Otolaryngology (ENT)", label: "Otolaryngology (ENT)" },
+  { value: "Paediatrics", label: "Paediatrics" },
+  { value: "Palliative Care", label: "Palliative Care" },
+  { value: "Pathology", label: "Pathology" },
+  { value: "Psychiatry", label: "Psychiatry" },
+  { value: "Radiology", label: "Radiology" },
+  { value: "Respiratory Medicine", label: "Respiratory Medicine" },
+  { value: "Rheumatology", label: "Rheumatology" },
+  { value: "Surgery", label: "Surgery" },
+  { value: "Urology", label: "Urology" },
 ];
 
 export default tagSuggestions;
