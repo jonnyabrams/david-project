@@ -24,7 +24,6 @@ import tagSuggestions from "@/constants/tagSuggestions";
 import "@/styles/tags.css";
 
 const PostForm = () => {
-  const [selectedTags, setSelectedTags] = useState<any[]>([]);
   const [tooManyTags, setTooManyTags] = useState(false);
 
   const form = useForm<z.infer<typeof PostSchema>>({
@@ -36,23 +35,20 @@ const PostForm = () => {
     },
   });
 
-  console.log(form.getValues().tags);
-
   const onAddTag = useCallback(
     (newTag: any) => {
-      if (selectedTags.length < 3) {
+      if (form.getValues().tags.length < 3) {
         form.setValue("tags", [...form.getValues().tags, newTag]);
-        setSelectedTags([...selectedTags, newTag]);
       } else {
         setTooManyTags(true);
       }
     },
-    [form, selectedTags]
+    [form]
   );
 
   const onDeleteTag = useCallback(
     (tagIndex: number) => {
-      if (selectedTags.length === 3) {
+      if (form.getValues().tags.length === 3) {
         setTooManyTags(false);
       }
 
@@ -61,9 +57,8 @@ const PostForm = () => {
         .tags.filter((_, i) => i !== tagIndex);
 
       form.setValue("tags", updatedTags);
-      setSelectedTags(updatedTags);
     },
-    [form, selectedTags]
+    [form]
   );
 
   const onSubmit = (values: z.infer<typeof PostSchema>) => {
@@ -129,7 +124,7 @@ const PostForm = () => {
               </FormLabel>
               <FormControl className="mt-3.5">
                 <ReactTags
-                  selected={selectedTags}
+                  selected={form.getValues().tags}
                   suggestions={tagSuggestions}
                   onAdd={onAddTag}
                   onDelete={onDeleteTag}
