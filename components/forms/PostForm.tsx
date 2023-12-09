@@ -22,8 +22,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { PostSchema } from "@/lib/validations";
 import tagSuggestions from "@/constants/tagSuggestions";
 import "@/styles/tags.css";
+import { createPost } from "@/lib/actions/post.action";
+
+const type: any = "create";
 
 const PostForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
 
   const form = useForm<z.infer<typeof PostSchema>>({
@@ -61,8 +65,16 @@ const PostForm = () => {
     [form]
   );
 
-  const onSubmit = (values: z.infer<typeof PostSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof PostSchema>) => {
+    setIsSubmitting(true);
+    
+    try {
+      await createPost({})
+    } catch (error) {
+      
+    } finally {
+      setIsSubmitting(false)
+    }
   };
 
   return (
@@ -164,7 +176,17 @@ const PostForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          type="submit"
+          className="primary-gradient w-fit !text-light-900"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+          ) : (
+            <>{type === "edit" ? "Edit Post" : "Submit Post"}</>
+          )}
+        </Button>
       </form>
     </Form>
   );

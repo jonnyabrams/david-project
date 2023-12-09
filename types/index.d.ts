@@ -20,7 +20,7 @@ export interface User {
   picture: string;
   trust?: string;
   specialty?: string;
-  subspecialty?: string;
+  subSpecialty?: string;
   bio?: string;
 }
 
@@ -35,8 +35,9 @@ export interface Post {
   _id: string;
   title: string;
   tags: string[];
-  user: User;
+  author: User;
   upvotes: number;
+  downvotes: number;
   views: number;
   comments: Comment[];
   createdAt: Date;
