@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useCallback, useState } from "react";
 import { ReactTags } from "react-tag-autocomplete";
+import { useRouter, usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,9 +27,16 @@ import { createPost } from "@/lib/actions/post.action";
 
 const type: any = "create";
 
-const PostForm = () => {
+interface PostFormProps {
+  dbUserId: string;
+}
+
+const PostForm = ({ dbUserId }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof PostSchema>>({
     resolver: zodResolver(PostSchema),
@@ -67,13 +75,19 @@ const PostForm = () => {
 
   const onSubmit = async (values: z.infer<typeof PostSchema>) => {
     setIsSubmitting(true);
-    
+
     try {
-      await createPost({})
+      await createPost({
+        title: values.title,
+        content: values.content,
+        tags: values.tags,
+        author: JSON.parse(dbUserId),
+      });
+
+      router.push("/");
     } catch (error) {
-      
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   };
 
