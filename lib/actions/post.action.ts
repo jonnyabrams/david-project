@@ -3,8 +3,27 @@
 import { connectToDatabase } from "../db";
 import Post from "@/models/post.model";
 import Tag from "@/models/tag.model";
+import User from "@/models/user.model";
+import { CreatePostParams, GetPostsParams } from "./shared.types";
+import { revalidatePath } from "next/cache";
 
-export const createPost = async (params: any) => {
+export const getPosts = async (params: GetPostsParams) => {
+  try {
+    connectToDatabase();
+
+    const posts = await Post.find({})
+      .populate({ path: "tags", model: Tag })
+      .populate({ path: "author", model: User })
+      .sort({ createdAt: -1 });
+
+    return { posts };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const createPost = async (params: CreatePostParams) => {
   try {
     connectToDatabase();
 
@@ -18,7 +37,6 @@ export const createPost = async (params: any) => {
 
     const tagDocuments = [];
 
-    
     for (const tag of tags) {
       // create tags or get them if they already exist
       // this searches for document in Tag collection where the name matches the regex
@@ -39,7 +57,9 @@ export const createPost = async (params: any) => {
 
     // for each tag document, push the id of that tag into the post's tags array
     await Post.findByIdAndUpdate(post._id, {
-      $push: {tags: {$each: tagDocuments}}
-    })
+      $push: { tags: { $each: tagDocuments } },
+    });
+
+    revalidatePath(path);
   } catch (error) {}
 };

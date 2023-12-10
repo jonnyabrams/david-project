@@ -82,6 +82,7 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
         content: values.content,
         tags: values.tags,
         author: JSON.parse(dbUserId),
+        path: pathname,
       });
 
       router.push("/");

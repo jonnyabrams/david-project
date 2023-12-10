@@ -7,52 +7,11 @@ import { HomePageFilters } from "@/constants/filters";
 import HomeFilters from "@/components/home/HomeFilters";
 import NoResults from "@/components/shared/NoResults";
 import PostCard from "@/components/cards/PostCard";
+import { getPosts } from "@/lib/actions/post.action";
 
-const Home = () => {
-  const posts = [
-    {
-      _id: "1",
-      title: "What on earth is a lung???",
-      tags: [
-        { _id: "1", name: "heart_disease", totalPosts: 4 },
-        { _id: "2", name: "lung_disease", totalPosts: 12 },
-      ],
-      user: {_id: "2002902", salutation: "Dr.", firstName: "Bobson", surname: "Dugnutt", picture: ""},
-      upvotes: 10,
-      views: 1000,
-      answers: 2,
-      createdAt: new Date("2021-09-01T12:00:00.000Z"),
-      comments: []
-    },
-    {
-      _id: "2",
-      title: "What on earth is a heart???",
-      tags: [
-        { _id: "1", name: "heart_disease", totalPosts: 12 },
-        { _id: "2", name: "lung_disease", totalPosts: 19 },
-      ],
-      user: {_id: "2002902", salutation: "Dr.", firstName: "Bobson", surname: "Dugnutt", picture: ""},
-      upvotes: 20,
-      views: 2130494,
-      answers: 2,
-      createdAt: new Date("2021-09-01T12:00:00.000Z"),
-      comments: []
-    },
-    {
-      _id: "3",
-      title: "What on earth is a face???",
-      tags: [
-        { _id: "1", name: "heart_disease", totalPosts: 12 },
-        { _id: "2", name: "lung_disease", totalPosts: 120 },
-      ],
-      user: {_id: "2002902", salutation: "Dr.", firstName: "Bobson", surname: "Dugnutt", picture: ""},
-      upvotes: 3000,
-      views: 300010101,
-      answers: 0,
-      createdAt: new Date("2021-09-01T12:00:00.000Z"),
-      comments: []
-    },
-  ];
+const Home = async () => {
+  const result = await getPosts({});
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -84,8 +43,21 @@ const Home = () => {
       <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        {posts.length > 0 ? (
-          posts.map((post) => <PostCard key={post._id} post={post} />)
+        {result.posts.length > 0 ? (
+          result.posts.map((post) => (
+            <PostCard
+              key={post._id}
+              id={post._id}
+              title={post.title}
+              tags={post.tags}
+              author={post.author}
+              upvotes={post.upvotes}
+              views={post.views}
+              comments={post.comments}
+              createdAt={post.createdAt}
+              clerkId={post.clerkId}
+            />
+          ))
         ) : (
           <NoResults
             title="There aren't any posts yet!"

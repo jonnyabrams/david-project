@@ -1,4 +1,5 @@
 import { Schema, models, model, Document } from "mongoose";
+import { IUser } from "./user.model";
 
 export interface IPost extends Document {
   title: string;
@@ -7,7 +8,7 @@ export interface IPost extends Document {
   views: number;
   upvotes: Schema.Types.ObjectId[];
   downvotes: Schema.Types.ObjectId[];
-  author: Schema.Types.ObjectId;
+  author: IUser | Schema.Types.ObjectId;
   comments: Schema.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;

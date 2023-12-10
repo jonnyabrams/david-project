@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Tag } from "@/types";
+import { ITag } from "@/models/tag.model";
 
 interface RenderTagsProps {
-  tag: Tag;
+  tag: ITag;
   showCount?: boolean;
 }
 
@@ -15,7 +15,7 @@ const RenderTag = ({ tag, showCount }: RenderTagsProps) => {
         {tag.name}
       </Badge>
 
-      {showCount && <p className="small-medium text-dark500_light700">{tag.totalPosts}</p>}
+      {showCount && <p className="small-medium text-dark500_light700">{tag.posts?.length}</p>}
     </Link>
   );
 };
