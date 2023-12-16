@@ -51,7 +51,7 @@ const RightSidebar = () => {
             <RenderTag
               key={tag._id}
               name={tag.name}
-              totalPosts={tag.posts.length}
+              totalPosts={tag.totalPosts}
               showCount
             />
           ))}

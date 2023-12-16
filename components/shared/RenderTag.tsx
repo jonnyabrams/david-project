@@ -3,9 +3,9 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
 interface RenderTagsProps {
-  _id: string;
+  _id?: string;
   name: string;
-  totalPosts: number;
+  totalPosts?: number;
   showCount?: boolean;
 }
 
