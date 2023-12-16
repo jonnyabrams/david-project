@@ -1,21 +1,22 @@
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { ITag } from "@/models/tag.model";
 
 interface RenderTagsProps {
-  tag: ITag;
+  _id: string;
+  name: string;
+  totalPosts: number;
   showCount?: boolean;
 }
 
-const RenderTag = ({ tag, showCount }: RenderTagsProps) => {
+const RenderTag = ({ _id, name, totalPosts, showCount }: RenderTagsProps) => {
   return (
-    <Link href={`/tags/${tag._id}`} className="flex justify-between gap-2">
+    <Link href={`/tags/${_id}`} className="flex justify-between gap-2">
       <Badge className="subtle-medium background-light800_dark300 text-light400_light500 rounded-md border-none px-4 py-2 uppercase">
-        {tag.name}
+        {name}
       </Badge>
 
-      {showCount && <p className="small-medium text-dark500_light700">{tag.posts?.length}</p>}
+      {showCount && <p className="small-medium text-dark500_light700">{totalPosts}</p>}
     </Link>
   );
 };
