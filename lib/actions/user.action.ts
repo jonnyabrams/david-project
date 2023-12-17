@@ -1,16 +1,19 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { connectToDatabase } from "../db";
 import User from "@/models/user.model";
 import {
   CreateUserParams,
   DeleteUserParams,
+  GetAllUsersParams,
+  GetUserByIdParams,
   UpdateUserParams,
 } from "./shared.types";
-import { revalidatePath } from "next/cache";
 import Post from "@/models/post.model";
 
-export const getUserById = async (params: any) => {
+export const getUserById = async (params: GetUserByIdParams) => {
   try {
     connectToDatabase();
 
@@ -75,6 +78,21 @@ export const deleteUser = async (params: DeleteUserParams) => {
     const deletedUser = await User.findByIdAndDelete(user._id);
 
     return deletedUser;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getAllUsers = async (params: GetAllUsersParams) => {
+  try {
+    connectToDatabase();
+
+    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+
+    const users = await User.find({}).sort({ createdAt: -1 });
+
+    return { users };
   } catch (error) {
     console.log(error);
     throw error;
