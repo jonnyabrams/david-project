@@ -2,7 +2,8 @@
 
 import User from "@/models/user.model";
 import { connectToDatabase } from "../db";
-import { GetTopTagsForUserParams } from "./shared.types";
+import { GetAllTagsParams, GetTopTagsForUserParams } from "./shared.types";
+import Tag from "@/models/tag.model";
 
 export const getTopTagsForUser = async (params: GetTopTagsForUserParams) => {
   try {
@@ -21,6 +22,19 @@ export const getTopTagsForUser = async (params: GetTopTagsForUserParams) => {
       { _id: "2", name: "tag 2" },
       { _id: "3", name: "tag 3" },
     ];
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getAllTags = async (params: GetAllTagsParams) => {
+  try {
+    connectToDatabase();
+
+    const tags = await Tag.find({});
+
+    return { tags };
   } catch (error) {
     console.log(error);
     throw error;

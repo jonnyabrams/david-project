@@ -43,6 +43,13 @@ export interface GetAllUsersParams {
   searchQuery?: string;
 }
 
+export interface GetAllTagsParams {
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+  searchQuery?: string;
+}
+
 export interface GetTopTagsForUserParams {
   userId: string;
   limit?: number;
