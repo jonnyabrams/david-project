@@ -20,7 +20,6 @@ export interface CreatePostParams {
 export interface CreateUserParams {
   clerkId: string;
   email: string;
-  picture: string;
 }
 
 export interface UpdateUserParams {
