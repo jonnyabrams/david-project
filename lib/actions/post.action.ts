@@ -4,7 +4,11 @@ import { connectToDatabase } from "../db";
 import Post from "@/models/post.model";
 import Tag from "@/models/tag.model";
 import User from "@/models/user.model";
-import { CreatePostParams, GetPostsParams } from "./shared.types";
+import {
+  CreatePostParams,
+  GetPostByIdParams,
+  GetPostsParams,
+} from "./shared.types";
 import { revalidatePath } from "next/cache";
 
 export const getPosts = async (params: GetPostsParams) => {
@@ -62,4 +66,29 @@ export const createPost = async (params: CreatePostParams) => {
 
     revalidatePath(path);
   } catch (error) {}
+};
+
+export const getPostById = async (params: GetPostByIdParams) => {
+  try {
+    connectToDatabase();
+
+    const { postId } = params;
+
+    const post = await Post.findById(postId)
+      .populate({
+        path: "tags",
+        model: Tag,
+        select: "_id name",
+      })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId salutation firstName lastName picture",
+      });
+
+    return post;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

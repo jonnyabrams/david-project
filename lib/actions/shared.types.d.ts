@@ -9,6 +9,10 @@ export interface GetPostsParams {
   filter?: string;
 }
 
+export interface GetPostByIdParams {
+  postId: string;
+}
+
 export interface CreatePostParams {
   title: string;
   content: string;

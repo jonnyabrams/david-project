@@ -11,8 +11,6 @@ const CreatePost = async () => {
 
   const dbUser = await getUserById({ userId });
 
-  console.log("HEY", dbUser)
-
   return (
     <div>
       <h1 className="h1-bold text-dark100_light900 ">Create a Post</h1>
