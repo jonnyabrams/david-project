@@ -1,9 +1,10 @@
 "use client";
 
+import { useRef, useCallback, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useCallback, useState } from "react";
 import { ReactTags } from "react-tag-autocomplete";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -18,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 import { PostSchema } from "@/lib/validations";
 import tagSuggestions from "@/constants/tagSuggestions";
@@ -35,6 +35,7 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
 
+  const editorRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -130,10 +131,43 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
                 Content <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                <Textarea
-                  placeholder="Share your best..."
-                  className="no-focus paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 min-h-[126px] border"
-                  {...field}
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+                  // @ts-ignore
+                  onInit={(evt, editor) => (editorRef.current = editor)}
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
+                  initialValue=""
+                  init={{
+                    height: 350,
+                    menubar: false,
+                    plugins: [
+                      "advlist",
+                      "autolink",
+                      "lists",
+                      "link",
+                      "image",
+                      "charmap",
+                      "preview",
+                      "anchor",
+                      "searchreplace",
+                      "visualblocks",
+                      "code",
+                      "fullscreen",
+                      "insertdatetime",
+                      "media",
+                      "table",
+                      "code",
+                      "help",
+                      "wordcount",
+                    ],
+                    toolbar:
+                      "undo redo | blocks | " +
+                      "bold italic forecolor | alignleft aligncenter " +
+                      "alignright alignjustify | bullist numlist outdent indent | " +
+                      "removeformat | help",
+                    content_style: "body { font-family:Inter; font-size:16px }",
+                  }}
                 />
               </FormControl>
               <FormMessage className="text-red-500" />
