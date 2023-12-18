@@ -181,7 +181,7 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Tags <span className="text-primary-500">*</span>
+                Tags
               </FormLabel>
               <FormControl className="mt-3.5">
                 <ReactTags

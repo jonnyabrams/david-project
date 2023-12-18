@@ -15,6 +15,5 @@ export const PostSchema = z.object({
         label: z.string().min(1).max(30),
       })
     )
-    .min(1)
     .max(3),
 });
