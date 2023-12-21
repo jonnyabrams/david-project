@@ -17,3 +17,9 @@ export const PostSchema = z.object({
     )
     .max(3),
 });
+
+export const CommentSchema = z.object({
+  content: z
+    .string()
+    .max(1000, { message: "Post cannot exceed 1000 characters" }),
+});

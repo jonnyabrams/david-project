@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import parse from "html-react-parser";
+import { auth } from "@clerk/nextjs";
 
 import Metric from "@/components/shared/Metric";
 import { getPostById } from "@/lib/actions/post.action";
 import { formatLargeNumber, getTimestamp } from "@/lib/utils";
 import RenderTag from "@/components/shared/RenderTag";
+import CommentForm from "@/components/forms/CommentForm";
+import { getUserById } from "@/lib/actions/user.action";
+import Comments from "@/components/shared/Comments";
 
 interface PostProps {
   params: { id: string };
@@ -13,6 +17,13 @@ interface PostProps {
 
 const Post = async ({ params }: PostProps) => {
   const result = await getPostById({ postId: params.id });
+  const { userId: clerkId } = auth();
+
+  let dbUser;
+
+  if (clerkId) {
+    dbUser = await getUserById({ userId: clerkId });
+  }
 
   return (
     <>
@@ -78,6 +89,18 @@ const Post = async ({ params }: PostProps) => {
           />
         ))}
       </div>
+
+      <Comments
+        postId={result._id}
+        userId={JSON.stringify(dbUser._id)}
+        numberOfComments={result.comments.length}
+      />
+
+      <CommentForm
+        postContent={result.content}
+        postId={JSON.stringify(result._id)}
+        authorId={JSON.stringify(dbUser._id)}
+      />
     </>
   );
 };

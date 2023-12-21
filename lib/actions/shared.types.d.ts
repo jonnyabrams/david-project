@@ -58,3 +58,17 @@ export interface GetTopTagsForUserParams {
   userId: string;
   limit?: number;
 }
+
+export interface CreateCommentParams {
+  content: string;
+  author: string; // user id
+  post: string; // post id
+  path: string;
+}
+
+export interface GetCommentsParams {
+  postId: string;
+  sortBy?: string;
+  page?: number;
+  pageSize?: number;
+}

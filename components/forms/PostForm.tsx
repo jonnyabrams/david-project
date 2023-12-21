@@ -24,6 +24,7 @@ import { PostSchema } from "@/lib/validations";
 import tagSuggestions from "@/constants/tagSuggestions";
 import "@/styles/tags.css";
 import { createPost } from "@/lib/actions/post.action";
+import { useTheme } from "@/context/ThemeProvider";
 
 const type: any = "create";
 
@@ -34,6 +35,8 @@ interface PostFormProps {
 const PostForm = ({ dbUserId }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
+
+  const { mode } = useTheme();
 
   const editorRef = useRef(null);
   const router = useRouter();
@@ -167,6 +170,8 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
                       "alignright alignjustify | bullist numlist outdent indent | " +
                       "removeformat | help",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
