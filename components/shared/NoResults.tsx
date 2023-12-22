@@ -5,12 +5,17 @@ import { Button } from "../ui/button";
 
 interface NoResultsProps {
   title: string;
-  description: string;
-  link: string;
-  buttonText: string;
+  description?: string;
+  link?: string;
+  buttonText?: string;
 }
 
-const NoResults = ({ title, description, link, buttonText }: NoResultsProps) => {
+const NoResults = ({
+  title,
+  description,
+  link,
+  buttonText,
+}: NoResultsProps) => {
   return (
     <div className="mt-10 flex w-full flex-col items-center justify-center">
       <Image
@@ -29,15 +34,17 @@ const NoResults = ({ title, description, link, buttonText }: NoResultsProps) => 
       />
 
       <h2 className="h2-bold text-dark200_light900 mt-8">{title}</h2>
-      <p className="body-regular text-dark500_light700 my-3.5 max-w-md text-center">
-        {description}
-      </p>
+      {description && (
+        <p className="body-regular text-dark500_light700 my-3.5 max-w-md text-center">
+          {description}
+        </p>
+      )}
 
-      <Link href={link}>
+      {link && <Link href={link}>
         <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500 dark:bg-primary-500 dark:text-light-900">
           {buttonText}
         </Button>
-      </Link>
+      </Link>}
     </div>
   );
 };

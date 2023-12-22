@@ -11,12 +11,12 @@ export const UserFilters = [
   { name: "Top Contributors", value: "top_contributors" },
 ];
 
-export const QuestionFilters = [
+export const PostFilters = [
   { name: "Most Recent", value: "most_recent" },
   { name: "Oldest", value: "oldest" },
-  { name: "Most Voted", value: "most_voted" },
+  { name: "Most Upvotes", value: "most_upvotes" },
   { name: "Most Viewed", value: "most_viewed" },
-  { name: "Most Answered", value: "most_answered" },
+  { name: "Most Comments", value: "most_comments" },
 ];
 
 export const TagFilters = [

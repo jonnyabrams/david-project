@@ -94,3 +94,11 @@ export interface ToggleSavePostParams {
   postId: string;
   path: string;
 }
+
+export interface GetSavedPostsParams {
+  clerkId: string;
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+  searchQuery?: string;
+}

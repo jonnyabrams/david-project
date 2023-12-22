@@ -3,11 +3,10 @@ import * as z from "zod";
 export const PostSchema = z.object({
   title: z
     .string()
-    .min(5, { message: "Title must be at least 5 characters" })
-    .max(130, { message: "Title must be a maximum of 130 characters" }),
+    .max(130, { message: "Title must not exceed 130 characters" }),
   content: z
     .string()
-    .max(1000, { message: "Post cannot exceed 1000 characters" }),
+    .max(3000, { message: "Post cannot exceed 3000 characters" }),
   tags: z
     .array(
       z.object({
@@ -21,5 +20,5 @@ export const PostSchema = z.object({
 export const CommentSchema = z.object({
   content: z
     .string()
-    .max(1000, { message: "Post cannot exceed 1000 characters" }),
+    .max(3000, { message: "Comment cannot exceed 3000 characters" }),
 });

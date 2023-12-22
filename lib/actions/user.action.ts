@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { FilterQuery } from "mongoose";
 
 import { connectToDatabase } from "../db";
 import User from "@/models/user.model";
@@ -8,11 +9,13 @@ import {
   CreateUserParams,
   DeleteUserParams,
   GetAllUsersParams,
+  GetSavedPostsParams,
   GetUserByIdParams,
   ToggleSavePostParams,
   UpdateUserParams,
 } from "./shared.types";
 import Post from "@/models/post.model";
+import Tag from "@/models/tag.model";
 
 export const getUserById = async (params: GetUserByIdParams) => {
   try {
@@ -133,6 +136,45 @@ export const toggleSavePost = async (params: ToggleSavePostParams) => {
     }
 
     revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getSavedPosts = async (params: GetSavedPostsParams) => {
+  try {
+    connectToDatabase();
+
+    const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
+
+    const query: FilterQuery<typeof Post> = searchQuery
+      ? { title: { $regex: new RegExp(searchQuery, "i") } }
+      : {};
+
+    const user = await User.findOne({ clerkId }).populate({
+      path: "savedPosts",
+      match: query,
+      options: {
+        sort: { createdAt: -1 },
+      },
+      populate: [
+        {
+          path: "tags",
+          model: Tag,
+          select: "_id name",
+        },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const savedPosts = user.savedPosts;
+
+    return { posts: savedPosts };
   } catch (error) {
     console.log(error);
     throw error;
