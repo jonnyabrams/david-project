@@ -102,3 +102,8 @@ export interface GetSavedPostsParams {
   filter?: string;
   searchQuery?: string;
 }
+
+export interface ViewPostParams {
+  postId: string;
+  userId: string | undefined;
+}

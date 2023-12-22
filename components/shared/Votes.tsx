@@ -8,6 +8,8 @@ import { downvotePost, upvotePost } from "@/lib/actions/post.action";
 import { formatLargeNumber } from "@/lib/utils";
 import { downvoteComment, upvoteComment } from "@/lib/actions/comment.action";
 import { toggleSavePost } from "@/lib/actions/user.action";
+import { useEffect } from "react";
+import { viewPost } from "@/lib/actions/interaction.action";
 
 interface VotesProps {
   type: string;
@@ -31,7 +33,7 @@ const Votes = ({
   userHasSaved,
 }: VotesProps) => {
   const pathname = usePathname();
-  // const router = useRouter();
+  const router = useRouter();
 
   const handleSave = async () => {
     await toggleSavePost({
@@ -90,6 +92,14 @@ const Votes = ({
       return;
     }
   };
+
+  // record a view
+  useEffect(() => {
+    viewPost({
+      postId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+    });
+  }, [itemId, userId, pathname, router]);
 
   return (
     <div className="flex gap-5">
