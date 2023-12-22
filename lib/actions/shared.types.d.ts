@@ -88,3 +88,9 @@ export interface CommentVoteParams {
   userHasDownvoted: boolean;
   path: string;
 }
+
+export interface ToggleSavePostParams {
+  userId: string;
+  postId: string;
+  path: string;
+}

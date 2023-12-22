@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { downvotePost, upvotePost } from "@/lib/actions/post.action";
 import { formatLargeNumber } from "@/lib/utils";
 import { downvoteComment, upvoteComment } from "@/lib/actions/comment.action";
+import { toggleSavePost } from "@/lib/actions/user.action";
 
 interface VotesProps {
   type: string;
@@ -30,9 +31,15 @@ const Votes = ({
   userHasSaved,
 }: VotesProps) => {
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
 
-  const handleSave = () => {};
+  const handleSave = async () => {
+    await toggleSavePost({
+      userId: JSON.parse(userId),
+      postId: JSON.parse(itemId),
+      path: pathname,
+    });
+  };
 
   const handleVote = async (action: string) => {
     if (!userId) {

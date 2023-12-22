@@ -9,6 +9,7 @@ import {
   DeleteUserParams,
   GetAllUsersParams,
   GetUserByIdParams,
+  ToggleSavePostParams,
   UpdateUserParams,
 } from "./shared.types";
 import Post from "@/models/post.model";
@@ -93,6 +94,45 @@ export const getAllUsers = async (params: GetAllUsersParams) => {
     const users = await User.find({}).sort({ createdAt: -1 });
 
     return { users };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const toggleSavePost = async (params: ToggleSavePostParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId, postId, path } = params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isPostAlreadySaved = user.savedPosts.includes(postId);
+
+    if (isPostAlreadySaved) {
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $pull: { savedPosts: postId },
+        },
+        { new: true }
+      );
+    } else {
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $addToSet: { savedPosts: postId },
+        },
+        { new: true }
+      );
+    }
+
+    revalidatePath(path);
   } catch (error) {
     console.log(error);
     throw error;

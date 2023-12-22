@@ -19,7 +19,7 @@ interface PostCardProps {
     surname: string;
     picture: string;
   };
-  upvotes: number;
+  upvotes: string[];
   views: number;
   comments: Array<object>;
   createdAt: Date;
@@ -71,8 +71,8 @@ const PostCard = ({
         <Metric
           imgUrl="/assets/icons/like.svg"
           alt="upvotes"
-          value={formatLargeNumber(upvotes)}
-          title=" votes"
+          value={formatLargeNumber(upvotes.length)}
+          title={` vote${upvotes.length === 1 ? "" : "s"}`}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
@@ -86,7 +86,7 @@ const PostCard = ({
           imgUrl="/assets/icons/eye.svg"
           alt="views"
           value={formatLargeNumber(views)}
-          title=" views"
+          title={views === 1 ? " view" : " views"}
           textStyles="small-medium text-dark400_light800"
         />
       </div>
