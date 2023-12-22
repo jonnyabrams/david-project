@@ -72,3 +72,19 @@ export interface GetCommentsParams {
   page?: number;
   pageSize?: number;
 }
+
+export interface PostVoteParams {
+  postId: string;
+  userId: string;
+  userHasUpvoted: boolean;
+  userHasDownvoted: boolean;
+  path: string;
+}
+
+export interface CommentVoteParams {
+  commentId: string;
+  userId: string;
+  userHasUpvoted: boolean;
+  userHasDownvoted: boolean;
+  path: string;
+}

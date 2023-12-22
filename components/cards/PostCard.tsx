@@ -79,7 +79,7 @@ const PostCard = ({
           imgUrl="/assets/icons/message.svg"
           alt="comments"
           value={formatLargeNumber(comments.length) || 0}
-          title=" comments"
+          title={comments.length === 1 ? " comment" : " comments"}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric

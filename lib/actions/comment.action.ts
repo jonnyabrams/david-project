@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import Comment from "@/models/comment.model";
 import { connectToDatabase } from "../db";
-import { CreateCommentParams, GetCommentsParams } from "./shared.types";
+import { CommentVoteParams, CreateCommentParams, GetCommentsParams } from "./shared.types";
 import Post from "@/models/post.model";
 
 export const createComment = async (params: CreateCommentParams) => {
@@ -42,6 +42,78 @@ export const getComments = async (params: GetCommentsParams) => {
       .sort({ createdAt: -1 });
 
     return { comments };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const upvoteComment = async (params: CommentVoteParams) => {
+  try {
+    connectToDatabase();
+
+    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } = params;
+
+    let updateQuery = {};
+
+    if (userHasUpvoted) {
+      updateQuery = { $pull: { upvotes: userId } };
+    } else if (userHasDownvoted) {
+      updateQuery = {
+        $pull: { downvotes: userId },
+        $push: { upvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } };
+    }
+
+    const comment = await Comment.findByIdAndUpdate(commentId, updateQuery, {
+      new: true,
+    });
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    // increment author's reputation
+
+    revalidatePath(path)
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const downvoteComment = async (params: CommentVoteParams) => {
+  try {
+    connectToDatabase();
+
+    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } = params;
+
+    let updateQuery = {};
+
+    if (userHasDownvoted) {
+      updateQuery = { $pull: { downvotes: userId } };
+    } else if (userHasUpvoted) {
+      updateQuery = {
+        $pull: { upvotes: userId },
+        $push: { downvotes: userId },
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } };
+    }
+
+    const comment = await Comment.findByIdAndUpdate(commentId, updateQuery, {
+      new: true,
+    });
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    // increment author's reputation
+
+    revalidatePath(path)
   } catch (error) {
     console.error(error);
     throw error;

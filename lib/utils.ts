@@ -33,10 +33,10 @@ export const getTimestamp = (createdAt: Date): string => {
 
 export const formatLargeNumber = (inputNumber: number): string => {
   if (inputNumber >= 1000000) {
-    return (inputNumber / 1000000).toFixed(1) + 'M';
+    return (inputNumber / 1000000).toFixed(1) + "M";
   } else if (inputNumber >= 1000) {
-    return (inputNumber / 1000).toFixed(1) + 'k';
+    return (inputNumber / 1000).toFixed(1) + "k";
   } else {
-    return inputNumber.toString();
+    return inputNumber?.toString();
   }
 };

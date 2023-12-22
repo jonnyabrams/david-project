@@ -6,6 +6,7 @@ import Filter from "./Filter";
 import { CommentFilters } from "@/constants/filters";
 import { getComments } from "@/lib/actions/comment.action";
 import { getTimestamp } from "@/lib/utils";
+import Votes from "./Votes";
 
 interface CommentsProps {
   postId: string;
@@ -56,7 +57,17 @@ const Comments = async ({
                   </div>
                 </Link>
 
-                <div className="flex justify-end">VOTING</div>
+                <div className="flex justify-end">
+                  <Votes
+                    type="Comment"
+                    itemId={JSON.stringify(comment._id)}
+                    userId={JSON.stringify(userId)}
+                    numberOfUpvotes={comment.upvotes.length}
+                    userHasUpvoted={comment.upvotes.includes(userId)}
+                    numberOfDownvotes={comment.downvotes.length}
+                    userHasDownvoted={comment.downvotes.includes(userId)}
+                  />
+                </div>
               </div>
             </div>
 

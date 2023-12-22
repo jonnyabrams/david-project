@@ -10,6 +10,7 @@ import RenderTag from "@/components/shared/RenderTag";
 import CommentForm from "@/components/forms/CommentForm";
 import { getUserById } from "@/lib/actions/user.action";
 import Comments from "@/components/shared/Comments";
+import Votes from "@/components/shared/Votes";
 
 interface PostProps {
   params: { id: string };
@@ -45,7 +46,18 @@ const Post = async ({ params }: PostProps) => {
             </p>
           </Link>
 
-          <div className="flex justify-end">VOTING</div>
+          <div className="flex justify-end">
+            <Votes
+              type="Post"
+              itemId={JSON.stringify(result._id)}
+              userId={JSON.stringify(dbUser._id)}
+              numberOfUpvotes={result.upvotes.length}
+              userHasUpvoted={result.upvotes.includes(dbUser._id)}
+              numberOfDownvotes={result.downvotes.length}
+              userHasDownvoted={result.downvotes.includes(dbUser._id)}
+              userHasSaved={dbUser?.savedPosts.includes(result._id)}
+            />
+          </div>
         </div>
 
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
@@ -65,7 +77,7 @@ const Post = async ({ params }: PostProps) => {
           imgUrl="/assets/icons/message.svg"
           alt="comments"
           value={formatLargeNumber(result.comments.length) || 0}
-          title=" comments"
+          title={result.comments.length === 1 ? " comment" : " comments"}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
@@ -92,7 +104,7 @@ const Post = async ({ params }: PostProps) => {
 
       <Comments
         postId={result._id}
-        userId={JSON.stringify(dbUser._id)}
+        userId={dbUser._id}
         numberOfComments={result.comments.length}
       />
 
