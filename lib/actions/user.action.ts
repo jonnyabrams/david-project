@@ -164,7 +164,7 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
           model: Tag,
           select: "_id name",
         },
-        { path: "author", model: User, select: "_id clerkId name picture" },
+        { path: "author", model: User, select: "_id clerkId salutation firstName surname picture" },
       ],
     });
 

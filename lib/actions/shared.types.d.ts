@@ -107,3 +107,10 @@ export interface ViewPostParams {
   postId: string;
   userId: string | undefined;
 }
+
+export interface GetPostsByTagIdParams {
+  tagId: string;
+  page?: number;
+  pageSize?: number;
+  searchQuery?: string;
+}

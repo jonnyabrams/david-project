@@ -53,7 +53,7 @@ export const createPost = async (params: CreatePostParams) => {
             $regex: new RegExp(`^${tag.value}$`, "i"),
           },
         },
-        { $setOnInsert: { name: tag.value }, $push: { post: post._id } },
+        { $setOnInsert: { name: tag.value }, $push: { posts: post._id } },
         { upsert: true, new: true }
       );
 
