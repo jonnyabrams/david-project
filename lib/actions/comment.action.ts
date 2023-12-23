@@ -4,8 +4,15 @@ import { revalidatePath } from "next/cache";
 
 import Comment from "@/models/comment.model";
 import { connectToDatabase } from "../db";
-import { CommentVoteParams, CreateCommentParams, GetCommentsParams } from "./shared.types";
+import {
+  CommentVoteParams,
+  CreateCommentParams,
+  DeleteCommentParams,
+  GetCommentsParams,
+} from "./shared.types";
 import Post from "@/models/post.model";
+import Interaction from "@/models/interaction.model";
+import Tag from "@/models/tag.model";
 
 export const createComment = async (params: CreateCommentParams) => {
   try {
@@ -52,7 +59,8 @@ export const upvoteComment = async (params: CommentVoteParams) => {
   try {
     connectToDatabase();
 
-    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } = params;
+    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } =
+      params;
 
     let updateQuery = {};
 
@@ -77,7 +85,7 @@ export const upvoteComment = async (params: CommentVoteParams) => {
 
     // increment author's reputation
 
-    revalidatePath(path)
+    revalidatePath(path);
   } catch (error) {
     console.error(error);
     throw error;
@@ -88,7 +96,8 @@ export const downvoteComment = async (params: CommentVoteParams) => {
   try {
     connectToDatabase();
 
-    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } = params;
+    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } =
+      params;
 
     let updateQuery = {};
 
@@ -113,7 +122,37 @@ export const downvoteComment = async (params: CommentVoteParams) => {
 
     // increment author's reputation
 
-    revalidatePath(path)
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteComment = async (params: DeleteCommentParams) => {
+  try {
+    connectToDatabase();
+
+    const { commentId, path } = params;
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    await Comment.deleteOne({ _id: commentId });
+
+    // pull comment from post
+    await Post.updateMany(
+      { _id: comment.post },
+      { $pull: { comments: commentId } }
+    );
+
+    // delete its interactions
+    await Interaction.deleteMany({ comment: commentId });
+
+    revalidatePath(path);
   } catch (error) {
     console.error(error);
     throw error;

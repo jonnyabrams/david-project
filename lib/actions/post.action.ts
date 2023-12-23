@@ -4,8 +4,11 @@ import { connectToDatabase } from "../db";
 import Post from "@/models/post.model";
 import Tag from "@/models/tag.model";
 import User from "@/models/user.model";
+import Comment from "@/models/comment.model";
+import Interaction from "@/models/interaction.model";
 import {
   CreatePostParams,
+  DeletePostParams,
   GetPostByIdParams,
   GetPostsParams,
   PostVoteParams,
@@ -123,7 +126,7 @@ export const upvotePost = async (params: PostVoteParams) => {
 
     // increment author's reputation
 
-    revalidatePath(path)
+    revalidatePath(path);
   } catch (error) {
     console.error(error);
     throw error;
@@ -159,7 +162,29 @@ export const downvotePost = async (params: PostVoteParams) => {
 
     // increment author's reputation
 
-    revalidatePath(path)
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deletePost = async (params: DeletePostParams) => {
+  try {
+    connectToDatabase();
+
+    const { postId, path } = params;
+
+    await Post.deleteOne({ _id: postId });
+
+    // delete its comments and interactions too
+    await Comment.deleteMany({ post: postId });
+    await Interaction.deleteMany({ post: postId });
+
+    // update tags to no longer include this post
+    await Tag.updateMany({ posts: postId }, { $pull: { posts: postId } });
+
+    revalidatePath(path);
   } catch (error) {
     console.error(error);
     throw error;

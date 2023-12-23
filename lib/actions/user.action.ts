@@ -11,11 +11,13 @@ import {
   GetAllUsersParams,
   GetSavedPostsParams,
   GetUserByIdParams,
+  GetUserStatsParams,
   ToggleSavePostParams,
   UpdateUserParams,
 } from "./shared.types";
 import Post from "@/models/post.model";
 import Tag from "@/models/tag.model";
+import Comment from "@/models/comment.model";
 
 export const getUserById = async (params: GetUserByIdParams) => {
   try {
@@ -164,7 +166,11 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
           model: Tag,
           select: "_id name",
         },
-        { path: "author", model: User, select: "_id clerkId salutation firstName surname picture" },
+        {
+          path: "author",
+          model: User,
+          select: "_id clerkId salutation firstName surname picture",
+        },
       ],
     });
 
@@ -175,6 +181,68 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
     const savedPosts = user.savedPosts;
 
     return { posts: savedPosts };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getUserInfo = async (params: GetUserByIdParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId } = params;
+
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const totalPosts = await Post.countDocuments({ author: user._id });
+    const totalComments = await Comment.countDocuments({ author: user._id });
+
+    return { user, totalPosts, totalComments };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getUserPosts = async (params: GetUserStatsParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    const totalPosts = await Post.countDocuments({ author: userId });
+
+    const userPosts = await Post.find({ author: userId })
+      .sort({ views: -1, upvotes: -1 })
+      .populate("tags", "_id name")
+      .populate("author", "_id clerkId salutation firstName surname picture");
+
+    return { totalPosts, posts: userPosts };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getUserComments = async (params: GetUserStatsParams) => {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    const totalComments = await Comment.countDocuments({ author: userId });
+
+    const userComments = await Comment.find({ author: userId })
+      .sort({ upvotes: -1 })
+      .populate("post", "_id title")
+      .populate("author", "_id clerkId salutation firstName surname picture");
+
+    return { totalComments, comments: userComments };
   } catch (error) {
     console.log(error);
     throw error;

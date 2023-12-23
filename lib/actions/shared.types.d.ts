@@ -114,3 +114,19 @@ export interface GetPostsByTagIdParams {
   pageSize?: number;
   searchQuery?: string;
 }
+
+export interface GetUserStatsParams {
+  userId: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface DeletePostParams {
+  postId: string;
+  path: string;
+}
+
+export interface DeleteCommentParams {
+  commentId: string;
+  path: string;
+}

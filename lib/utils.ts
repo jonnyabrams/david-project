@@ -1,9 +1,18 @@
+import { IUser } from "@/models/user.model";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const getFullName = (user: IUser) => {
+  return `${user.salutation} ${user.firstName} ${user.surname}`;
+};
+
+export const getUserLabel = (user: IUser) => {
+  return `${user.specialty} at ${user.trust}`;
+};
 
 export const getTimestamp = (createdAt: Date): string => {
   const now: Date = new Date();
@@ -39,4 +48,15 @@ export const formatLargeNumber = (inputNumber: number): string => {
   } else {
     return inputNumber?.toString();
   }
+};
+
+export const getJoinedDate = (date: Date): string => {
+  // Extract the month and year from the Date object
+  const month = date?.toLocaleString("default", { month: "long" });
+  const year = date?.getFullYear();
+
+  // Create the joined date string (e.g., "January 2023")
+  const joinedDate = `${month} ${year}`;
+
+  return joinedDate;
 };
