@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { deletePost } from "@/lib/actions/post.action";
 import { deleteComment } from "@/lib/actions/comment.action";
@@ -13,8 +13,11 @@ interface EditDeleteActionProps {
 
 const EditDeleteAction = ({ type, itemId }: EditDeleteActionProps) => {
   const pathname = usePathname();
+  const router = useRouter();
 
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    router.push(`/post/edit/${JSON.parse(itemId)}`);
+  };
 
   const handleDelete = async () => {
     if (type === "Post") {

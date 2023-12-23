@@ -23,16 +23,17 @@ import { Input } from "@/components/ui/input";
 import { PostSchema } from "@/lib/validations";
 import tagSuggestions from "@/constants/tagSuggestions";
 import "@/styles/tags.css";
-import { createPost } from "@/lib/actions/post.action";
+import { createPost, editPost } from "@/lib/actions/post.action";
 import { useTheme } from "@/context/ThemeProvider";
-
-const type: any = "create";
+import { ITag } from "@/models/tag.model";
 
 interface PostFormProps {
+  type?: string;
   dbUserId: string;
+  postDetails?: string;
 }
 
-const PostForm = ({ dbUserId }: PostFormProps) => {
+const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
 
@@ -42,12 +43,19 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
   const router = useRouter();
   const pathname = usePathname();
 
+  const parsedPostDetails = JSON.parse(postDetails || "");
+
+  const groupedTags = parsedPostDetails.tags.map((tag: ITag) => ({
+    value: tag.name,
+    label: tag.name,
+  }));
+
   const form = useForm<z.infer<typeof PostSchema>>({
     resolver: zodResolver(PostSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: parsedPostDetails.title || "",
+      content: parsedPostDetails.content || "",
+      tags: groupedTags || [],
     },
   });
 
@@ -81,15 +89,26 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
     setIsSubmitting(true);
 
     try {
-      await createPost({
-        title: values.title,
-        content: values.content,
-        tags: values.tags,
-        author: JSON.parse(dbUserId),
-        path: pathname,
-      });
+      if (type === "edit") {
+        await editPost({
+          postId: parsedPostDetails._id,
+          title: values.title,
+          content: values.content,
+          path: pathname,
+        });
 
-      router.push("/");
+        router.push(`/post/${parsedPostDetails._id}`);
+      } else {
+        await createPost({
+          title: values.title,
+          content: values.content,
+          tags: values.tags,
+          author: JSON.parse(dbUserId),
+          path: pathname,
+        });
+
+        router.push("/");
+      }
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -140,7 +159,7 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
                   onInit={(evt, editor) => (editorRef.current = editor)}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
-                  initialValue=""
+                  initialValue={parsedPostDetails.content || ""}
                   init={{
                     height: 350,
                     menubar: false,
@@ -198,6 +217,7 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
                   collapseOnSelect
                   noOptionsText="No matching tags"
                   labelText=""
+                  isDisabled={type === "edit"}
                   classNames={{
                     root: "react-tags background-light700_dark300 light-border-2 text-dark300_light700 min-h-[56px] border",
                     rootIsActive: "is-active",
@@ -222,6 +242,8 @@ const PostForm = ({ dbUserId }: PostFormProps) => {
                   <span className="text-red-500">
                     Maximum of 3 tags allowed!
                   </span>
+                ) : type === "edit" ? (
+                  "You cannot edit tags"
                 ) : (
                   "Add up to 3 relevant tags"
                 )}

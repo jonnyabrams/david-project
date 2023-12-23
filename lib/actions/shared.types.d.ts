@@ -126,6 +126,13 @@ export interface DeletePostParams {
   path: string;
 }
 
+export interface EditPostParams {
+  postId: string;
+  title: string;
+  content: string;
+  path: string;
+}
+
 export interface DeleteCommentParams {
   commentId: string;
   path: string;

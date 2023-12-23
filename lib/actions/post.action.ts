@@ -9,6 +9,7 @@ import Interaction from "@/models/interaction.model";
 import {
   CreatePostParams,
   DeletePostParams,
+  EditPostParams,
   GetPostByIdParams,
   GetPostsParams,
   PostVoteParams,
@@ -183,6 +184,30 @@ export const deletePost = async (params: DeletePostParams) => {
 
     // update tags to no longer include this post
     await Tag.updateMany({ posts: postId }, { $pull: { posts: postId } });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const editPost = async (params: EditPostParams) => {
+  try {
+    connectToDatabase();
+
+    const { postId, title, content, path } = params;
+
+    const post = await Post.findById(postId).populate("tags");
+
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    post.title = title;
+    post.content = content;
+
+    await post.save();
 
     revalidatePath(path);
   } catch (error) {
