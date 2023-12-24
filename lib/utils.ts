@@ -1,4 +1,7 @@
-import { specialtiesWithSubspecialties, subspecialtyMatcher } from "@/constants/specialties";
+import {
+  specialtiesWithSubspecialties,
+  subspecialtyMatcher,
+} from "@/constants/specialties";
 import { IUser } from "@/models/user.model";
 import { SelectOption } from "@/types";
 import { type ClassValue, clsx } from "clsx";
@@ -67,7 +70,7 @@ export const getJoinedDate = (date: Date): string => {
 export const getSubspecialties = (
   specialty: string | undefined,
   setShowSubspecialties: Dispatch<SetStateAction<boolean>>,
-  setSubspecialties: Dispatch<SetStateAction<SelectOption[]>>,
+  setSubspecialties: Dispatch<SetStateAction<SelectOption[]>>
 ) => {
   if (specialty && specialtiesWithSubspecialties.includes(specialty)) {
     setShowSubspecialties(true);
@@ -78,4 +81,7 @@ export const getSubspecialties = (
   }
 };
 
-export default getSubspecialties;
+export function isBase64Image(imageData: string) {
+  const base64Regex = /^data:image\/(png|jpe?g|gif|webp);base64,/;
+  return base64Regex.test(imageData);
+}

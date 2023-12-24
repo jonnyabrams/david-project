@@ -28,6 +28,7 @@ export const ProfileSchema = z.object({
   firstName: z.string().max(50),
   surname: z.string().max(50),
   website: z.string().url().optional().or(z.literal("")),
+  picture: z.string().url().optional().or(z.literal("")),
   location: z.string().max(50).optional().or(z.literal("")),
   trust: z.string().max(100),
   specialty: z.string().max(50),

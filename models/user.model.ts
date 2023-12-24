@@ -37,6 +37,7 @@ const UserSchema = new Schema(
     website: { type: String },
     reputation: { type: Number, default: 0 },
     savedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    isOnboarded: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

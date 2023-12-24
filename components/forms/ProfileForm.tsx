@@ -1,10 +1,12 @@
+/* eslint-disable no-useless-return */
 "use client";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +29,8 @@ import {
   specialtiesWithSubspecialties,
 } from "@/constants/specialties";
 import { SelectOption } from "@/types";
-import getSubspecialties from "@/lib/utils";
+import { getSubspecialties, isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface ProfileFormProps {
   clerkId: string;
@@ -35,9 +38,11 @@ interface ProfileFormProps {
 }
 
 const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSubspecialties, setShowSubspecialties] = useState(false);
   const [subspecialties, setSubspecialties] = useState<SelectOption[]>([]);
+  const { startUpload } = useUploadThing("media");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -55,6 +60,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
       website: parsedUser.website || "",
       location: parsedUser.location || "",
       bio: parsedUser.bio || "",
+      picture: parsedUser.picture || "",
     },
   });
 
@@ -68,8 +74,44 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
     );
   }, [currentSpecialty]);
 
+  const handleImage = (
+    e: ChangeEvent<HTMLInputElement>,
+    fieldChange: (value: string) => void
+  ) => {
+    e.preventDefault();
+
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setFiles(Array.from(e.target.files));
+
+      if (!file.type.includes("image")) return;
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+
+        fieldChange(imageDataUrl);
+      };
+
+      fileReader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     setIsSubmitting(true);
+
+    const blob = values.picture;
+    const imageHasChanged = isBase64Image(blob as string);
+
+    if (imageHasChanged) {
+      const imgRes = await startUpload(files);
+
+      if (imgRes && imgRes[0].url) {
+        values.picture = imgRes[0].url;
+      }
+    }
 
     const updateData = {
       salutation: values.salutation,
@@ -84,12 +126,18 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
       location: values.location,
       website: values.website,
       bio: values.bio,
+      picture: values.picture,
+      isOnboarded: true,
     };
 
     try {
       await updateUser({ clerkId, updateData, path: pathname });
 
-      router.back();
+      if (pathname === "/profile/edit") {
+        router.back();
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -103,6 +151,43 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="mt-9 flex w-full flex-col gap-9"
       >
+        <FormField
+          control={form.control}
+          name="picture"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel>
+                {field.value ? (
+                  <Image
+                    src={field.value}
+                    alt="profile picture"
+                    width={140}
+                    height={140}
+                    priority
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src="/assets/images/default-profile-picture.png"
+                    alt="profile picture"
+                    width={140}
+                    height={140}
+                    className="rounded-full object-cover"
+                  />
+                )}
+              </FormLabel>
+              <FormControl className="flex-1">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
+                  onChange={(e) => handleImage(e, field.onChange)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="salutation"
