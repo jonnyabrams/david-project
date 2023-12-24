@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
@@ -15,10 +15,10 @@ import { getUserById } from "@/lib/actions/user.action";
 const Home = async () => {
   const result = await getPosts({});
 
-  const user = await currentUser();
-  if (!user) return null;
+  const { userId } = auth();
+  if (!userId) return null;
 
-  const dbUser = await getUserById({userId: user.id})
+  const dbUser = await getUserById({ userId });
   if (!dbUser?.isOnboarded) redirect("/onboarding");
 
   return (
