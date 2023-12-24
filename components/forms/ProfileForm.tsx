@@ -51,16 +51,16 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      salutation: parsedUser.salutation || "",
-      firstName: parsedUser.firstName || "",
-      surname: parsedUser.surname || "",
-      trust: parsedUser.trust || "",
-      specialty: parsedUser.specialty || "",
-      subspecialty: parsedUser.subspecialty || "",
-      website: parsedUser.website || "",
-      location: parsedUser.location || "",
-      bio: parsedUser.bio || "",
-      picture: parsedUser.picture || "",
+      salutation: parsedUser?.salutation || "",
+      firstName: parsedUser?.firstName || "",
+      surname: parsedUser?.surname || "",
+      trust: parsedUser?.trust || "",
+      specialty: parsedUser?.specialty || "",
+      subspecialty: parsedUser?.subspecialty || "",
+      website: parsedUser?.website || "",
+      location: parsedUser?.location || "",
+      bio: parsedUser?.bio || "",
+      picture: parsedUser?.picture || "",
     },
   });
 

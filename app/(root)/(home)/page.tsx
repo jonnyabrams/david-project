@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
@@ -8,9 +10,16 @@ import HomeFilters from "@/components/home/HomeFilters";
 import NoResults from "@/components/shared/NoResults";
 import PostCard from "@/components/cards/PostCard";
 import { getPosts } from "@/lib/actions/post.action";
+import { getUserById } from "@/lib/actions/user.action";
 
 const Home = async () => {
   const result = await getPosts({});
+
+  const user = await currentUser();
+  if (!user) return null;
+
+  const dbUser = await getUserById({userId: user.id})
+  if (!dbUser?.isOnboarded) redirect("/onboarding");
 
   return (
     <>

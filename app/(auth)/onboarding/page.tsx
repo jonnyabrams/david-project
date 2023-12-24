@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 import ProfileForm from "@/components/forms/ProfileForm";
 import { getUserById } from "@/lib/actions/user.action";
@@ -8,6 +9,7 @@ const Onboarding = async () => {
   if (!userId) return null;
 
   const dbUser = await getUserById({ userId });
+  if (dbUser?.isOnboarded) redirect("/");
 
   return (
     <div>
