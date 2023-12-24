@@ -1,5 +1,8 @@
+import { specialtiesWithSubspecialties, subspecialtyMatcher } from "@/constants/specialties";
 import { IUser } from "@/models/user.model";
+import { SelectOption } from "@/types";
 import { type ClassValue, clsx } from "clsx";
+import { Dispatch, SetStateAction } from "react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -60,3 +63,19 @@ export const getJoinedDate = (date: Date): string => {
 
   return joinedDate;
 };
+
+export const getSubspecialties = (
+  specialty: string | undefined,
+  setShowSubspecialties: Dispatch<SetStateAction<boolean>>,
+  setSubspecialties: Dispatch<SetStateAction<SelectOption[]>>,
+) => {
+  if (specialty && specialtiesWithSubspecialties.includes(specialty)) {
+    setShowSubspecialties(true);
+    setSubspecialties((subspecialtyMatcher as any)[specialty]);
+  } else {
+    setShowSubspecialties(false);
+    setSubspecialties([]);
+  }
+};
+
+export default getSubspecialties;

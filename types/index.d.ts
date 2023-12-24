@@ -28,6 +28,11 @@ export interface Job {
   job_country?: string;
 }
 
+export interface SelectOption {
+  value: string;
+  name: string;
+}
+
 export interface Country {
   name: {
     common: string;

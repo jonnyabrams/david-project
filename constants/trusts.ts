@@ -1,8 +1,4 @@
-export const trustList = [
-  "Airedale NHS Foundation Trust",
-  "Alder Hey Children's NHS Foundation Trust",
-  "Ashford and St Peter's Hospitals NHS Foundation Trust",
-  "Avon and Wiltshire Mental Health Partnership NHS Trust",
+const trustList = [
   "Airedale NHS Foundation Trust",
   "Alder Hey Children's NHS Foundation Trust",
   "Ashford and St Peter's Hospitals NHS Foundation Trust",
@@ -220,3 +216,6 @@ export const trustList = [
   "Yorkshire Ambulance Service NHS Trust",
 ];
 
+const trusts = trustList.map((trust) => ({ value: trust, name: trust }));
+
+export default trusts;

@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -17,16 +17,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ProfileSchema } from "@/lib/validations";
 import { updateUser } from "@/lib/actions/user.action";
+import { salutations } from "@/constants";
+import SelectInput from "../shared/SelectInput";
+import trusts from "@/constants/trusts";
+import {
+  specialties,
+  specialtiesWithSubspecialties,
+} from "@/constants/specialties";
+import { SelectOption } from "@/types";
+import getSubspecialties from "@/lib/utils";
 
 interface ProfileFormProps {
   clerkId: string;
@@ -35,6 +36,8 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSubspecialties, setShowSubspecialties] = useState(false);
+  const [subspecialties, setSubspecialties] = useState<SelectOption[]>([]);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -55,6 +58,16 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
     },
   });
 
+  const currentSpecialty = form.watch("specialty");
+
+  useEffect(() => {
+    getSubspecialties(
+      currentSpecialty,
+      setShowSubspecialties,
+      setSubspecialties
+    );
+  }, [currentSpecialty]);
+
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     setIsSubmitting(true);
 
@@ -64,7 +77,10 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
       surname: values.surname,
       trust: values.trust,
       specialty: values.specialty,
-      subspecialty: values.subspecialty,
+      // make empty string if change to specialty without subspecialty otherwise prev value will remain
+      subspecialty: specialtiesWithSubspecialties.includes(currentSpecialty)
+        ? values.subspecialty
+        : "",
       location: values.location,
       website: values.website,
       bio: values.bio,
@@ -87,6 +103,23 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="mt-9 flex w-full flex-col gap-9"
       >
+        <FormField
+          control={form.control}
+          name="salutation"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5">
+              <FormLabel>Salutation</FormLabel>
+              <FormControl>
+                <SelectInput
+                  name="salutation"
+                  options={salutations}
+                  field={field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="firstName"
@@ -123,6 +156,55 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="trust"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5">
+              <FormLabel>Trust</FormLabel>
+              <FormControl>
+                <SelectInput name="trust" options={trusts} field={field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="specialty"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5">
+              <FormLabel>Specialty</FormLabel>
+              <FormControl>
+                <SelectInput
+                  name="specialty"
+                  options={specialties}
+                  field={field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {showSubspecialties && (
+          <FormField
+            control={form.control}
+            name="subspecialty"
+            render={({ field }) => (
+              <FormItem className="space-y-3.5">
+                <FormLabel>Subspecialty</FormLabel>
+                <FormControl>
+                  <SelectInput
+                    name="subspecialty"
+                    options={subspecialties}
+                    field={field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="website"

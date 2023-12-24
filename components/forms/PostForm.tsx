@@ -43,9 +43,9 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const parsedPostDetails = JSON.parse(postDetails || "");
+  const parsedPostDetails = postDetails && JSON.parse(postDetails || "");
 
-  const groupedTags = parsedPostDetails.tags.map((tag: ITag) => ({
+  const groupedTags = parsedPostDetails?.tags.map((tag: ITag) => ({
     value: tag.name,
     label: tag.name,
   }));
@@ -53,8 +53,8 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
   const form = useForm<z.infer<typeof PostSchema>>({
     resolver: zodResolver(PostSchema),
     defaultValues: {
-      title: parsedPostDetails.title || "",
-      content: parsedPostDetails.content || "",
+      title: parsedPostDetails?.title || "",
+      content: parsedPostDetails?.content || "",
       tags: groupedTags || [],
     },
   });
@@ -91,13 +91,13 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
     try {
       if (type === "edit") {
         await editPost({
-          postId: parsedPostDetails._id,
+          postId: parsedPostDetails?._id,
           title: values.title,
           content: values.content,
           path: pathname,
         });
 
-        router.push(`/post/${parsedPostDetails._id}`);
+        router.push(`/post/${parsedPostDetails?._id}`);
       } else {
         await createPost({
           title: values.title,
@@ -159,7 +159,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                   onInit={(evt, editor) => (editorRef.current = editor)}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
-                  initialValue={parsedPostDetails.content || ""}
+                  initialValue={parsedPostDetails?.content || ""}
                   init={{
                     height: 350,
                     menubar: false,

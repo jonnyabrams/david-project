@@ -6,6 +6,14 @@ export const themes = [
   { value: "system", label: "System", icon: "/assets/icons/computer.svg" },
 ];
 
+export const salutations = [
+  { value: "Mr.", name: "Mr." },
+  { value: "Mrs.", name: "Mrs." },
+  { value: "Ms.", name: "Ms." },
+  { value: "Dr.", name: "Dr." },
+  { value: "Prof.", name: "Prof." },
+];
+
 export const sidebarLinks: SidebarLink[] = [
   {
     imgUrl: "/assets/icons/home.svg",
