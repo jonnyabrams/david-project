@@ -22,3 +22,15 @@ export const CommentSchema = z.object({
     .string()
     .max(3000, { message: "Comment cannot exceed 3000 characters" }),
 });
+
+export const ProfileSchema = z.object({
+  salutation: z.string(),
+  firstName: z.string().max(50),
+  surname: z.string().max(50),
+  website: z.string().url().optional().or(z.literal("")),
+  location: z.string().max(50).optional().or(z.literal("")),
+  trust: z.string().max(100),
+  specialty: z.string().max(50),
+  subspecialty: z.string().max(50).optional().or(z.literal("")),
+  bio: z.string().max(350).optional().or(z.literal("")),
+});
