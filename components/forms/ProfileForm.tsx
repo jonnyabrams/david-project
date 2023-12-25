@@ -4,7 +4,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -29,7 +29,11 @@ import {
   specialtiesWithSubspecialties,
 } from "@/constants/specialties";
 import { SelectOption } from "@/types";
-import { getSubspecialties, isBase64Image } from "@/lib/utils";
+import {
+  getSubspecialties,
+  handleImages,
+  setImagesInFormValues,
+} from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
 
 interface ProfileFormProps {
@@ -38,7 +42,7 @@ interface ProfileFormProps {
 }
 
 const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSubspecialties, setShowSubspecialties] = useState(false);
   const [subspecialties, setSubspecialties] = useState<SelectOption[]>([]);
@@ -74,44 +78,10 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
     );
   }, [currentSpecialty]);
 
-  const handleImage = (
-    e: ChangeEvent<HTMLInputElement>,
-    fieldChange: (value: string) => void
-  ) => {
-    e.preventDefault();
-
-    const fileReader = new FileReader();
-
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-
-      setFiles(Array.from(e.target.files));
-
-      if (!file.type.includes("image")) return;
-
-      fileReader.onload = async (event) => {
-        const imageDataUrl = event.target?.result?.toString() || "";
-
-        fieldChange(imageDataUrl);
-      };
-
-      fileReader.readAsDataURL(file);
-    }
-  };
-
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     setIsSubmitting(true);
 
-    const blob = values.picture;
-    const imageHasChanged = isBase64Image(blob as string);
-
-    if (imageHasChanged) {
-      const imgRes = await startUpload(files);
-
-      if (imgRes && imgRes[0].url) {
-        values.picture = imgRes[0].url;
-      }
-    }
+    setImagesInFormValues(values, startUpload, images);
 
     const updateData = {
       salutation: values.salutation,
@@ -182,7 +152,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                   type="file"
                   accept="image/*"
                   className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  onChange={(e) => handleImage(e, field.onChange)}
+                  onChange={(e) => handleImages(e, field.onChange, setImages)}
                 />
               </FormControl>
               <FormMessage />
