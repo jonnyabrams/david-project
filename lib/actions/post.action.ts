@@ -89,7 +89,7 @@ export const getPostById = async (params: GetPostByIdParams) => {
       .populate({
         path: "author",
         model: User,
-        select: "_id clerkId salutation firstName lastName picture",
+        select: "_id clerkId salutation firstName surname picture",
       });
 
     return post;

@@ -26,8 +26,6 @@ const Post = async ({ params }: PostProps) => {
     dbUser = await getUserById({ userId: clerkId });
   }
 
-  console.log(result)
-
   return (
     <>
       <div className="flex-start w-full flex-col">
@@ -44,7 +42,7 @@ const Post = async ({ params }: PostProps) => {
               alt="profile"
             />
             <p className="paragraph-semibold text-dark300_light700">
-              {`${result.author.salutation} ${result.author.firstName} ${result.author.lastName}`}
+              {`${result.author.salutation} ${result.author.firstName} ${result.author.surname}`}
             </p>
           </Link>
 
@@ -92,6 +90,16 @@ const Post = async ({ params }: PostProps) => {
       </div>
 
       <div>{parse(result.content)}</div>
+
+      {result.picture && (
+        <Image
+          src={result.picture}
+          alt="post image"
+          width={340}
+          height={340}
+          className="mt-6 object-cover"
+        />
+      )}
 
       <div className="mt-8 flex flex-wrap gap-2">
         {result.tags.map((tag: any) => (

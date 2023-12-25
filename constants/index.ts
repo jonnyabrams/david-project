@@ -46,9 +46,9 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Profile",
   },
   {
-    imgUrl: "/assets/icons/question.svg",
-    route: "/ask-question",
-    label: "Ask a question",
+    imgUrl: "/assets/icons/add-circle.svg",
+    route: "/create-post",
+    label: "New Post",
   },
 ];
 

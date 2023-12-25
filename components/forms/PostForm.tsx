@@ -202,6 +202,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                   onEditorChange={(content) => field.onChange(content)}
                   initialValue={parsedPostDetails?.content || ""}
                   init={{
+                    branding: false,
                     height: 350,
                     menubar: false,
                     plugins: [
@@ -258,7 +259,9 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                 ) : (
                   // TODO: replace default image
                   <Image
-                    src="/assets/icons/camera.svg"
+                    src={
+                      parsedPostDetails?.picture || "/assets/icons/camera.svg"
+                    }
                     alt="profile picture"
                     width={140}
                     height={140}

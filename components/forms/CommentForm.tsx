@@ -105,6 +105,7 @@ const CommentForm = ({ postContent, postId, authorId }: CommentFormProps) => {
                     onBlur={field.onBlur}
                     onEditorChange={(content) => field.onChange(content)}
                     init={{
+                      branding: false,
                       height: 350,
                       menubar: false,
                       plugins: [
