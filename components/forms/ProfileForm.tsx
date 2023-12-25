@@ -167,6 +167,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                     className="rounded-full object-cover"
                   />
                 ) : (
+                  // TODO: replace default image
                   <Image
                     src="/assets/images/default-profile-picture.png"
                     alt="profile picture"
