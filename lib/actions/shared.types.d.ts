@@ -18,6 +18,7 @@ export interface CreatePostParams {
   content: string;
   tags: { label: string; value: string }[];
   author: Schema.Types.ObjectId | IUser;
+  picture: string | undefined;
   path;
 }
 
@@ -130,6 +131,7 @@ export interface EditPostParams {
   postId: string;
   title: string;
   content: string;
+  picture: string | undefined;
   path: string;
 }
 

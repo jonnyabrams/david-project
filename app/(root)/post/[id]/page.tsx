@@ -26,6 +26,8 @@ const Post = async ({ params }: PostProps) => {
     dbUser = await getUserById({ userId: clerkId });
   }
 
+  console.log(result)
+
   return (
     <>
       <div className="flex-start w-full flex-col">

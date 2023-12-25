@@ -4,7 +4,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -29,11 +29,7 @@ import {
   specialtiesWithSubspecialties,
 } from "@/constants/specialties";
 import { SelectOption } from "@/types";
-import {
-  getSubspecialties,
-  handleImages,
-  setImagesInFormValues,
-} from "@/lib/utils";
+import { getSubspecialties, isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
 
 interface ProfileFormProps {
@@ -78,10 +74,44 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
     );
   }, [currentSpecialty]);
 
+  const handleImages = (
+    e: ChangeEvent<HTMLInputElement>,
+    fieldChange: (value: string) => void
+  ) => {
+    e.preventDefault();
+
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setImages(Array.from(e.target.files));
+
+      if (!file.type.includes("image")) return;
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+
+        fieldChange(imageDataUrl);
+      };
+
+      fileReader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     setIsSubmitting(true);
 
-    setImagesInFormValues(values, startUpload, images);
+    const blob = values.picture;
+    const imageHasChanged = isBase64Image(blob as string);
+
+    if (imageHasChanged) {
+      const imgRes = await startUpload(images);
+
+      if (imgRes && imgRes[0].url) {
+        values.picture = imgRes[0].url;
+      }
+    }
 
     const updateData = {
       salutation: values.salutation,
@@ -152,7 +182,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                   type="file"
                   accept="image/*"
                   className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  onChange={(e) => handleImages(e, field.onChange, setImages)}
+                  onChange={(e) => handleImages(e, field.onChange)}
                 />
               </FormControl>
               <FormMessage />

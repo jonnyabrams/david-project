@@ -10,6 +10,7 @@ export interface IPost extends Document {
   downvotes: Schema.Types.ObjectId[];
   author: IUser | Schema.Types.ObjectId;
   comments: Schema.Types.ObjectId[];
+  picture: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +25,7 @@ const PostSchema = new Schema(
     downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     author: { type: Schema.Types.ObjectId, ref: "User" },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+    picture: { type: String },
   },
   { timestamps: true }
 );

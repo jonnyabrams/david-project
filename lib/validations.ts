@@ -7,6 +7,7 @@ export const PostSchema = z.object({
   content: z
     .string()
     .max(3000, { message: "Post cannot exceed 3000 characters" }),
+  picture: z.string().url().optional().or(z.literal("")),
   tags: z
     .array(
       z.object({

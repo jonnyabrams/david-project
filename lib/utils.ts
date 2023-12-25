@@ -5,7 +5,7 @@ import {
 import { IUser } from "@/models/user.model";
 import { SelectOption } from "@/types";
 import { type ClassValue, clsx } from "clsx";
-import { Dispatch, SetStateAction, ChangeEvent } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -84,42 +84,4 @@ export const getSubspecialties = (
 export function isBase64Image(imageData: string) {
   const base64Regex = /^data:image\/(png|jpe?g|gif|webp);base64,/;
   return base64Regex.test(imageData);
-}
-
-export const handleImages = (
-  e: ChangeEvent<HTMLInputElement>,
-  fieldChange: (value: string) => void, setFiles: Dispatch<SetStateAction<File[]>>
-) => {
-  e.preventDefault();
-
-  const fileReader = new FileReader();
-
-  if (e.target.files && e.target.files.length > 0) {
-    const file = e.target.files[0];
-
-    setFiles(Array.from(e.target.files));
-
-    if (!file.type.includes("image")) return;
-
-    fileReader.onload = async (event) => {
-      const imageDataUrl = event.target?.result?.toString() || "";
-
-      fieldChange(imageDataUrl);
-    };
-
-    fileReader.readAsDataURL(file);
-  }
-};
-
-export const setImagesInFormValues = async (values: any, startUpload: any, images: File[]) => {
-  const blob = values.picture;
-    const imageHasChanged = isBase64Image(blob as string);
-
-    if (imageHasChanged) {
-      const imgRes = await startUpload(images);
-
-      if (imgRes && imgRes[0].url) {
-        values.picture = imgRes[0].url;
-      }
-    }
 }

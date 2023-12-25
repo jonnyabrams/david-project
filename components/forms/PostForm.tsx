@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, ChangeEvent } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ReactTags } from "react-tag-autocomplete";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,13 +20,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { PostSchema } from "@/lib/validations";
 import tagSuggestions from "@/constants/tagSuggestions";
 import "@/styles/tags.css";
 import { createPost, editPost } from "@/lib/actions/post.action";
 import { useTheme } from "@/context/ThemeProvider";
 import { ITag } from "@/models/tag.model";
+import { useUploadThing } from "@/lib/uploadthing";
+import { isBase64Image } from "@/lib/utils";
 
 interface PostFormProps {
   type?: string;
@@ -36,7 +38,8 @@ interface PostFormProps {
 const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
-
+  const [images, setImages] = useState<File[]>([]);
+  const { startUpload } = useUploadThing("media");
   const { mode } = useTheme();
 
   const editorRef = useRef(null);
@@ -85,8 +88,44 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
     [form]
   );
 
+  const handleImages = (
+    e: ChangeEvent<HTMLInputElement>,
+    fieldChange: (value: string) => void
+  ) => {
+    e.preventDefault();
+
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setImages(Array.from(e.target.files));
+
+      if (!file.type.includes("image")) return;
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+
+        fieldChange(imageDataUrl);
+      };
+
+      fileReader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof PostSchema>) => {
     setIsSubmitting(true);
+
+    const blob = values.picture;
+    const imageHasChanged = isBase64Image(blob as string);
+
+    if (imageHasChanged) {
+      const imgRes = await startUpload(images);
+
+      if (imgRes && imgRes[0].url) {
+        values.picture = imgRes[0].url;
+      }
+    }
 
     try {
       if (type === "edit") {
@@ -94,6 +133,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           postId: parsedPostDetails?._id,
           title: values.title,
           content: values.content,
+          picture: values.picture,
           path: pathname,
         });
 
@@ -104,6 +144,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           content: values.content,
           tags: values.tags,
           author: JSON.parse(dbUserId),
+          picture: values.picture,
           path: pathname,
         });
 
@@ -195,6 +236,45 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                 />
               </FormControl>
               <FormMessage className="text-red-500" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="picture"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel>
+                {field.value ? (
+                  <Image
+                    src={field.value}
+                    alt="post image"
+                    width={140}
+                    height={140}
+                    priority
+                    className="object-cover"
+                  />
+                ) : (
+                  // TODO: replace default image
+                  <Image
+                    src="/assets/icons/camera.svg"
+                    alt="profile picture"
+                    width={140}
+                    height={140}
+                    className="object-cover"
+                  />
+                )}
+              </FormLabel>
+              <FormControl className="flex-1">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
+                  onChange={(e) => handleImages(e, field.onChange)}
+                />
+              </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
