@@ -8,7 +8,10 @@ const getUser = async () => await currentUser();
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  media: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+  media: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+    pdf: { maxFileSize: "8MB", maxFileCount: 1 },
+  })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
@@ -17,7 +20,7 @@ export const ourFileRouter = {
       // If you throw, the user will not be able to upload
       if (!user) throw new Error("Unauthorized");
 
-      // Whatever is returned here is accessible in onUploadComplete as `metadata`
+      // Whatever is returned here https://cloud.mongodb.com/v2/654cc82f2dd2863b6179e2ad#/triggersis accessible in onUploadComplete as `metadata`
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {

@@ -39,6 +39,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
   const [images, setImages] = useState<File[]>([]);
+  const [documents, setDocuments] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
   const { mode } = useTheme();
 
@@ -113,6 +114,31 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
     }
   };
 
+  const handleDocuments = (
+    e: ChangeEvent<HTMLInputElement>,
+    fieldChange: (value: string) => void
+  ) => {
+    e.preventDefault();
+
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setDocuments(Array.from(e.target.files));
+
+      // if (!file.type.includes("pdf")) return;
+
+      fileReader.onload = async (event) => {
+        const documentDataUrl = event.target?.result?.toString() || "";
+
+        fieldChange(documentDataUrl);
+      };
+
+      fileReader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof PostSchema>) => {
     setIsSubmitting(true);
 
@@ -127,6 +153,17 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
       }
     }
 
+    const docBlob = values.picture;
+    const documentHasChanged = isBase64Image(docBlob as string);
+
+    if (documentHasChanged) {
+      const docRes = await startUpload(documents);
+
+      if (docRes && docRes[0].url) {
+        values.pdf = docRes[0].url;
+      }
+    }
+
     try {
       if (type === "edit") {
         await editPost({
@@ -134,6 +171,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           title: values.title,
           content: values.content,
           picture: values.picture,
+          pdf: values.pdf,
           path: pathname,
         });
 
@@ -145,6 +183,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           tags: values.tags,
           author: JSON.parse(dbUserId),
           picture: values.picture,
+          pdf: values.pdf,
           path: pathname,
         });
 
@@ -273,6 +312,25 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                 <Input
                   type="file"
                   accept="image/*"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
+                  onChange={(e) => handleDocuments(e, field.onChange)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="picture"
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-4">
+              <FormLabel>PDF</FormLabel>
+              <FormControl className="flex-1">
+                <Input
+                  type="file"
+                  accept="application/pdf"
                   className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
                   onChange={(e) => handleImages(e, field.onChange)}
                 />
