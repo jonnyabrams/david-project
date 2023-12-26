@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import parse from "html-react-parser";
-import { auth } from "@clerk/nextjs";
+import { SignedIn, auth } from "@clerk/nextjs";
 import { FileText } from "lucide-react";
 
 import Metric from "@/components/shared/Metric";
@@ -12,6 +12,7 @@ import CommentForm from "@/components/forms/CommentForm";
 import { getUserById } from "@/lib/actions/user.action";
 import Comments from "@/components/shared/Comments";
 import Votes from "@/components/shared/Votes";
+import EditDeleteAction from "@/components/shared/EditDeleteAction";
 
 interface PostProps {
   params: { id: string };
@@ -26,6 +27,8 @@ const Post = async ({ params }: PostProps) => {
   if (clerkId) {
     dbUser = await getUserById({ userId: clerkId });
   }
+
+  const showActionButtons = clerkId && clerkId === result.author.clerkId;
 
   return (
     <>
@@ -61,9 +64,15 @@ const Post = async ({ params }: PostProps) => {
           </div>
         </div>
 
-        <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
+        <span className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {result.title}
-        </h2>
+        </span>
+
+        <SignedIn>
+          {showActionButtons && (
+            <EditDeleteAction type="Post" itemId={JSON.stringify(result._id)} />
+          )}
+        </SignedIn>
       </div>
 
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
@@ -104,8 +113,8 @@ const Post = async ({ params }: PostProps) => {
 
       {result.pdf && (
         <a href={result.pdf.url} target="_blank">
-          <div className="mt-6 flex items-center gap-2">
-            <FileText className="text-dark300_light900 cursor-pointer" />
+          <div className="mt-6 flex cursor-pointer items-center gap-2">
+            <FileText className="text-dark300_light900" />
             <span className="text-dark300_light900 text-xs">
               {result.pdf.name}
             </span>

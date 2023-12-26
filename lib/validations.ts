@@ -3,7 +3,7 @@ import * as z from "zod";
 export const PostSchema = z.object({
   title: z
     .string()
-    .max(130, { message: "Title must not exceed 130 characters" }),
+    .max(100, { message: "Title must not exceed 100 characters" }),
   content: z
     .string()
     .max(3000, { message: "Post cannot exceed 3000 characters" }),

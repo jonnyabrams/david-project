@@ -8,6 +8,7 @@ import * as z from "zod";
 import { ReactTags } from "react-tag-autocomplete";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
     },
   });
 
-  console.log(parsedPostDetails)
+  console.log(parsedPostDetails);
 
   const onAddTag = useCallback(
     (newTag: any) => {
@@ -346,17 +347,26 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="primary-gradient w-fit !text-light-900"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <>{type === "edit" ? "Editing..." : "Posting..."}</>
-          ) : (
-            <>{type === "edit" ? "Save" : "Submit"}</>
-          )}
-        </Button>
+        <div className="flex items-center gap-6">
+          <Button
+            type="submit"
+            className="primary-gradient w-fit !text-light-900"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>{type === "edit" ? "Editing..." : "Posting..."}</>
+            ) : (
+              <>{type === "edit" ? "Save" : "Submit"}</>
+            )}
+          </Button>
+
+          <Link
+            href={`/post/${parsedPostDetails._id}`}
+            className="text-dark200_light900 cursor-pointer rounded-md border p-1.5 text-xs"
+          >
+            Cancel
+          </Link>
+        </div>
       </form>
     </Form>
   );
