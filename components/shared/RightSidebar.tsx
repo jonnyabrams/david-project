@@ -2,14 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 import RenderTag from "./RenderTag";
+import { getTopPosts } from "@/lib/actions/post.action";
 
-const topPosts = [
-  { _id: 1, title: "What is a lung, seriously what is it?" },
-  { _id: 2, title: "What is a throat, seriously what is it??" },
-  { _id: 3, title: "What is a heart, seriously what is it??" },
-  { _id: 4, title: "What is a mind, seriously what is it??" },
-  { _id: 5, title: "What is a tongue, seriously what is it??" },
-];
+// const topPosts = [
+//   { _id: 1, title: "What is a lung, seriously what is it?" },
+//   { _id: 2, title: "What is a throat, seriously what is it??" },
+//   { _id: 3, title: "What is a heart, seriously what is it??" },
+//   { _id: 4, title: "What is a mind, seriously what is it??" },
+//   { _id: 5, title: "What is a tongue, seriously what is it??" },
+// ];
 
 const popularTags = [
   { _id: 1, name: "heart_surgery", totalPosts: 5 },
@@ -19,7 +20,9 @@ const popularTags = [
   { _id: 5, name: "broken_bones", totalPosts: 5 },
 ];
 
-const RightSidebar = () => {
+const RightSidebar = async () => {
+  const topPosts = await getTopPosts();
+
   return (
     <section className="background-light900_dark200 light-border custom-scrollbar sticky right-0 top-0 flex h-screen w-[350px] flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden">
       <div>
@@ -27,7 +30,7 @@ const RightSidebar = () => {
         <div className="mt-7 flex w-full flex-col gap-[30px]">
           {topPosts.map((post) => (
             <Link
-              href={`/posts/${post._id}`}
+              href={`/post/${post._id}`}
               key={post._id}
               className="flex cursor-pointer items-center justify-between gap-7"
             >

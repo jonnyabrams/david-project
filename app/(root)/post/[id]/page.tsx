@@ -111,7 +111,7 @@ const Post = async ({ params }: PostProps) => {
         />
       )}
 
-      {result.pdf && (
+      {(result.pdf && result.pdf.url )&& (
         <a href={result.pdf.url} target="_blank">
           <div className="mt-6 flex cursor-pointer items-center gap-2">
             <FileText className="text-dark300_light900" />

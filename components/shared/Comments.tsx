@@ -71,7 +71,9 @@ const Comments = async ({
               </div>
             </div>
 
-            <div>{parse(comment.content)}</div>
+            <div className="text-dark200_light900">
+              {parse(comment.content)}
+            </div>
           </article>
         ))}
       </div>

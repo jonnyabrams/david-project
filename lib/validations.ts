@@ -40,5 +40,5 @@ export const ProfileSchema = z.object({
   trust: z.string().max(100),
   specialty: z.string().max(50),
   subspecialty: z.string().max(50).optional().or(z.literal("")),
-  bio: z.string().max(350).optional().or(z.literal("")),
+  bio: z.string().max(500).optional().or(z.literal("")),
 });

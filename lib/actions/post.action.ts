@@ -219,3 +219,18 @@ export const editPost = async (params: EditPostParams) => {
     throw error;
   }
 };
+
+export const getTopPosts = async () => {
+  try {
+    connectToDatabase();
+
+    const topPosts = await Post.find({})
+      .sort({ views: -1, upvotes: -1 })
+      .limit(5);
+
+    return topPosts;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
