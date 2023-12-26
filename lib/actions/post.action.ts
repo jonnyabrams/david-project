@@ -36,13 +36,14 @@ export const createPost = async (params: CreatePostParams) => {
   try {
     connectToDatabase();
 
-    const { title, content, tags, author, picture, path } = params;
+    const { title, content, tags, author, picture, pdf, path } = params;
 
     const post = await Post.create({
       title,
       content,
       author,
       picture,
+      pdf,
     });
 
     const tagDocuments = [];
@@ -89,7 +90,7 @@ export const getPostById = async (params: GetPostByIdParams) => {
       .populate({
         path: "author",
         model: User,
-        select: "_id clerkId salutation firstName surname picture",
+        select: "_id clerkId salutation firstName surname picture pdf",
       });
 
     return post;
@@ -197,7 +198,7 @@ export const editPost = async (params: EditPostParams) => {
   try {
     connectToDatabase();
 
-    const { postId, title, content, picture, path } = params;
+    const { postId, title, content, picture, pdf, path } = params;
 
     const post = await Post.findById(postId).populate("tags");
 
@@ -208,6 +209,7 @@ export const editPost = async (params: EditPostParams) => {
     post.title = title;
     post.content = content;
     post.picture = picture;
+    post.pdf = pdf;
 
     await post.save();
 

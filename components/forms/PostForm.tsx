@@ -8,6 +8,7 @@ import * as z from "zod";
 import { ReactTags } from "react-tag-autocomplete";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import { FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -57,8 +58,11 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
       title: parsedPostDetails?.title || "",
       content: parsedPostDetails?.content || "",
       tags: groupedTags || [],
+      pdf: parsedPostDetails?.pdf || undefined,
     },
   });
+
+  console.log(parsedPostDetails)
 
   const onAddTag = useCallback(
     (newTag: any) => {
@@ -229,7 +233,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                     alt="profile picture"
                     width={140}
                     height={140}
-                    className="object-cover"
+                    className="text-dark300_light900 object-cover"
                   />
                 )}
               </FormLabel>
@@ -255,14 +259,34 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           name="pdf"
           render={({ field }) => (
             <FormItem className="flex items-center gap-4">
-              <FormLabel>PDF</FormLabel>
+              <FormLabel>
+                {field.value ? (
+                  <a href={field.value.url} target="_blank">
+                    <div className="flex items-center gap-2">
+                      <FileText className="text-dark300_light900 cursor-pointer" />
+                      <span className="text-dark300_light900 text-xs">
+                        {field.value.name}
+                      </span>
+                    </div>
+                  </a>
+                ) : (
+                  <span className="text-dark300_light900">Upload a PDF:</span>
+                )}
+              </FormLabel>
               <FormControl className="flex-1">
-                {/* <Input
-                  type="file"
-                  accept="application/pdf"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  onChange={(e) => handleImages(e, field.onChange)}
-                /> */}
+                <UploadButton
+                  endpoint="pdfUploader"
+                  onClientUploadComplete={(res) => {
+                    form.setValue("pdf", {
+                      name: res[0].name,
+                      url: res[0].url,
+                    });
+                  }}
+                  onUploadError={(error: Error) => {
+                    // Do something with the error.
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

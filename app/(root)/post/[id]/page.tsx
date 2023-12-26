@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import parse from "html-react-parser";
 import { auth } from "@clerk/nextjs";
+import { FileText } from "lucide-react";
 
 import Metric from "@/components/shared/Metric";
 import { getPostById } from "@/lib/actions/post.action";
@@ -89,7 +90,7 @@ const Post = async ({ params }: PostProps) => {
         />
       </div>
 
-      <div>{parse(result.content)}</div>
+      <div className="text-dark300_light900">{parse(result.content)}</div>
 
       {result.picture && (
         <Image
@@ -99,6 +100,17 @@ const Post = async ({ params }: PostProps) => {
           height={340}
           className="mt-6 object-cover"
         />
+      )}
+
+      {result.pdf && (
+        <a href={result.pdf.url} target="_blank">
+          <div className="mt-6 flex items-center gap-2">
+            <FileText className="text-dark300_light900 cursor-pointer" />
+            <span className="text-dark300_light900 text-xs">
+              {result.pdf.name}
+            </span>
+          </div>
+        </a>
       )}
 
       <div className="mt-8 flex flex-wrap gap-2">
