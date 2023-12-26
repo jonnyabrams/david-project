@@ -1,12 +1,14 @@
+import { type ClassValue, clsx } from "clsx";
+import { Dispatch, SetStateAction } from "react";
+import { twMerge } from "tailwind-merge";
+import qs from "query-string";
+
 import {
   specialtiesWithSubspecialties,
   subspecialtyMatcher,
 } from "@/constants/specialties";
 import { IUser } from "@/models/user.model";
-import { SelectOption } from "@/types";
-import { type ClassValue, clsx } from "clsx";
-import { Dispatch, SetStateAction } from "react";
-import { twMerge } from "tailwind-merge";
+import { RemoveUrlQueryParams, SelectOption, UrlQueryParams } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -79,4 +81,38 @@ export const getSubspecialties = (
     setShowSubspecialties(false);
     setSubspecialties([]);
   }
+};
+
+export const getUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+  const currentUrl = qs.parse(params);
+
+  // only update the one we want to update (ie. not any extra filters or whatever)
+  currentUrl[key] = value;
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: currentUrl,
+    },
+    { skipNull: true }
+  );
+};
+
+export const removeKeysFromQuery = ({
+  params,
+  keysToRemove,
+}: RemoveUrlQueryParams) => {
+  const currentUrl = qs.parse(params);
+
+  keysToRemove.forEach((key: string) => {
+    delete currentUrl[key];
+  });
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: currentUrl,
+    },
+    { skipNull: true }
+  );
 };

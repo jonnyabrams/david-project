@@ -58,4 +58,15 @@ export interface BadgeCounts {
   BRONZE: number;
 }
 
+export interface UrlQueryParams {
+  params: string;
+  key: string;
+  value: string | null;
+}
+
+export interface RemoveUrlQueryParams {
+  params: string;
+  keysToRemove: string[];
+}
+
 export type BadgeCriteriaType = keyof typeof BADGE_CRITERIA;
