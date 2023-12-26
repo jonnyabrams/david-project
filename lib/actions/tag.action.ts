@@ -91,3 +91,23 @@ export const getPostsByTagId = async (params: GetPostsByTagIdParams) => {
     throw error;
   }
 };
+
+export const getPopularTags = async () => {
+  try {
+    connectToDatabase();
+
+    const popularTags = await Tag.aggregate([
+      {
+        // this returns us the tag name and a numberOfPosts property that's the size of the posts array
+        $project: { name: 1, numberOfPosts: { $size: '$posts' } }
+      },
+      { $sort: { numberOfPosts: -1 } },
+      { $limit: 5 }
+    ]);
+
+    return popularTags;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

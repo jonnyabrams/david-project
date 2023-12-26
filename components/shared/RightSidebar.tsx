@@ -3,25 +3,11 @@ import Link from "next/link";
 
 import RenderTag from "./RenderTag";
 import { getTopPosts } from "@/lib/actions/post.action";
-
-// const topPosts = [
-//   { _id: 1, title: "What is a lung, seriously what is it?" },
-//   { _id: 2, title: "What is a throat, seriously what is it??" },
-//   { _id: 3, title: "What is a heart, seriously what is it??" },
-//   { _id: 4, title: "What is a mind, seriously what is it??" },
-//   { _id: 5, title: "What is a tongue, seriously what is it??" },
-// ];
-
-const popularTags = [
-  { _id: 1, name: "heart_surgery", totalPosts: 5 },
-  { _id: 2, name: "lung_disease", totalPosts: 3 },
-  { _id: 3, name: "covid", totalPosts: 7 },
-  { _id: 4, name: "dental_surgery", totalPosts: 2 },
-  { _id: 5, name: "broken_bones", totalPosts: 5 },
-];
+import { getPopularTags } from "@/lib/actions/tag.action";
 
 const RightSidebar = async () => {
   const topPosts = await getTopPosts();
+  const popularTags = await getPopularTags();
 
   return (
     <section className="background-light900_dark200 light-border custom-scrollbar sticky right-0 top-0 flex h-screen w-[350px] flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden">
@@ -53,8 +39,9 @@ const RightSidebar = async () => {
           {popularTags.map((tag) => (
             <RenderTag
               key={tag._id}
+              _id={tag._id}
               name={tag.name}
-              totalPosts={tag.totalPosts}
+              totalPosts={tag.numberOfPosts}
               showCount
             />
           ))}
