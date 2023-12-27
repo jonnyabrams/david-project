@@ -94,9 +94,23 @@ export const getAllUsers = async (params: GetAllUsersParams) => {
   try {
     connectToDatabase();
 
-    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const { searchQuery } = params;
 
-    const users = await User.find({}).sort({ createdAt: -1 });
+    const query: FilterQuery<typeof User> = {};
+
+    if (searchQuery) {
+      const searchTerms = searchQuery.split(/\s+/).filter(Boolean);
+
+      query.$and = searchTerms.map((term) => ({
+        $or: [
+          { salutation: { $regex: new RegExp(term, "i") } },
+          { firstName: { $regex: new RegExp(term, "i") } },
+          { surname: { $regex: new RegExp(term, "i") } },
+        ],
+      }));
+    }
+
+    const users = await User.find(query).sort({ createdAt: -1 });
 
     return { users };
   } catch (error) {

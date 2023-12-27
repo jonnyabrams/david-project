@@ -5,9 +5,12 @@ import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { UserFilters } from "@/constants/filters";
 import { getAllUsers } from "@/lib/actions/user.action";
+import { SearchParamsProps } from "@/types";
 
-const Community = async () => {
-  const result = await getAllUsers({});
+const Community = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getAllUsers({
+    searchQuery: searchParams.q
+  });
 
   return (
     <>
@@ -18,7 +21,7 @@ const Community = async () => {
           route="/community"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
-          placeholder="Search for other users..."
+          placeholder="Search for people..."
           otherClasses="flex-1"
         />
 
