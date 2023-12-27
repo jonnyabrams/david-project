@@ -1,5 +1,7 @@
 "use server";
 
+import { FilterQuery } from "mongoose";
+
 import User from "@/models/user.model";
 import { connectToDatabase } from "../db";
 import {
@@ -8,8 +10,6 @@ import {
   GetTopTagsForUserParams,
 } from "./shared.types";
 import Tag, { ITag } from "@/models/tag.model";
-import { FilterQuery } from "mongoose";
-import { query } from "express";
 import Post from "@/models/post.model";
 
 export const getTopTagsForUser = async (params: GetTopTagsForUserParams) => {
@@ -39,7 +39,15 @@ export const getAllTags = async (params: GetAllTagsParams) => {
   try {
     connectToDatabase();
 
-    const tags = await Tag.find({});
+    const { searchQuery } = params;
+
+    const query: FilterQuery<typeof Tag> = {};
+
+    if (searchQuery) {
+      query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
+    }
+
+    const tags = await Tag.find(query);
 
     return { tags };
   } catch (error) {
@@ -60,7 +68,12 @@ export const getPostsByTagId = async (params: GetPostsByTagIdParams) => {
       path: "posts",
       model: Post,
       match: searchQuery
-        ? { title: { $regex: searchQuery, $options: "i" } }
+        ? {
+            $or: [
+              { title: { $regex: searchQuery, $options: "i" } },
+              { content: { $regex: searchQuery, $options: "i" } },
+            ],
+          }
         : {},
       options: {
         sort: { createdAt: -1 },
@@ -99,10 +112,10 @@ export const getPopularTags = async () => {
     const popularTags = await Tag.aggregate([
       {
         // this returns us the tag name and a numberOfPosts property that's the size of the posts array
-        $project: { name: 1, numberOfPosts: { $size: '$posts' } }
+        $project: { name: 1, numberOfPosts: { $size: "$posts" } },
       },
       { $sort: { numberOfPosts: -1 } },
-      { $limit: 5 }
+      { $limit: 5 },
     ]);
 
     return popularTags;

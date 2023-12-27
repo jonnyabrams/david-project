@@ -30,11 +30,6 @@ const LocalSearchbar = ({
 
   const [search, setSearch] = useState(query || "");
 
-  console.log(pathname === route)
-
-  console.log("path:", pathname)
-  console.log("route:", route)
-
   useEffect(() => {
     // put a short delay so it doesn't update for every new keystroke
     const delayDebounce = setTimeout(() => {
