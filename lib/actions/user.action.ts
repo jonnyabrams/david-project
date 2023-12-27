@@ -165,11 +165,17 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
   try {
     connectToDatabase();
 
-    const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
+    const { clerkId, searchQuery } = params;
 
-    const query: FilterQuery<typeof Post> = searchQuery
-      ? { title: { $regex: new RegExp(searchQuery, "i") } }
-      : {};
+    // initialize an empty query object
+    const query: FilterQuery<typeof Post> = {}
+
+    if (searchQuery) {
+      query.$or = [
+        { title: {$regex: new RegExp(searchQuery, "i")}},
+        { content: {$regex: new RegExp(searchQuery, "i")}},
+      ]
+    }
 
     const user = await User.findOne({ clerkId }).populate({
       path: "savedPosts",

@@ -6,14 +6,16 @@ import NoResults from "@/components/shared/NoResults";
 import PostCard from "@/components/cards/PostCard";
 import { getSavedPosts } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs";
+import { SearchParamsProps } from "@/types";
 
-const SavedPosts = async () => {
+const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();
 
   if (!userId) return null;
 
   const result = await getSavedPosts({
     clerkId: userId,
+    searchQuery: searchParams.q,
   });
 
   return (
@@ -22,7 +24,7 @@ const SavedPosts = async () => {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchbar
-          route="/"
+          route="/saved-posts"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search for posts..."
@@ -38,7 +40,7 @@ const SavedPosts = async () => {
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.posts.length > 0 ? (
-          result.posts.map((post) => (
+          result.posts.map((post: any) => (
             <PostCard
               key={post._id}
               id={post._id}
