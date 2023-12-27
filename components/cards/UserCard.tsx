@@ -41,7 +41,7 @@ const UserCard = async ({ user }: UserCardProps) => {
             {user.surname || "Name"}
           </h3>
           <p className="body-regular text-dark500_light500 mt-2">
-            {user.specialty || "Specialty"} @{user.trust || "Trust"}
+            {user.specialty || "Specialty"} at {user.trust || "Trust"}
           </p>
         </div>
 

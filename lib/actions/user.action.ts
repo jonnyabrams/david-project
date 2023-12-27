@@ -106,6 +106,9 @@ export const getAllUsers = async (params: GetAllUsersParams) => {
           { salutation: { $regex: new RegExp(term, "i") } },
           { firstName: { $regex: new RegExp(term, "i") } },
           { surname: { $regex: new RegExp(term, "i") } },
+          { trust: { $regex: new RegExp(term, "i") } },
+          { specialty: { $regex: new RegExp(term, "i") } },
+          { subspecialty: { $regex: new RegExp(term, "i") } },
         ],
       }));
     }
