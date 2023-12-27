@@ -1,5 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { FilterQuery } from "mongoose";
+
 import { connectToDatabase } from "../db";
 import Post from "@/models/post.model";
 import Tag from "@/models/tag.model";
@@ -14,13 +17,24 @@ import {
   GetPostsParams,
   PostVoteParams,
 } from "./shared.types";
-import { revalidatePath } from "next/cache";
 
 export const getPosts = async (params: GetPostsParams) => {
   try {
     connectToDatabase();
 
-    const posts = await Post.find({})
+    const { searchQuery } = params;
+
+    // initialize an empty query object
+    const query: FilterQuery<typeof Post> = {}
+
+    if (searchQuery) {
+      query.$or = [
+        { title: {$regex: new RegExp(searchQuery, "i")}},
+        { content: {$regex: new RegExp(searchQuery, "i")}},
+      ]
+    }
+
+    const posts = await Post.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 });

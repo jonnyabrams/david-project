@@ -11,9 +11,12 @@ import NoResults from "@/components/shared/NoResults";
 import PostCard from "@/components/cards/PostCard";
 import { getPosts } from "@/lib/actions/post.action";
 import { getUserById } from "@/lib/actions/user.action";
+import { SearchParamsProps } from "@/types";
 
-const Home = async () => {
-  const result = await getPosts({});
+const Home = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getPosts({
+    searchQuery: searchParams.q
+  });
 
   const { userId } = auth();
   if (!userId) return null;
@@ -38,7 +41,7 @@ const Home = async () => {
           route="/"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
-          placeholder="Search for posts..."
+          placeholder="Search posts..."
           otherClasses="flex-1"
         />
 
