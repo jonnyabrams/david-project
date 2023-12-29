@@ -16,9 +16,10 @@ import EditDeleteAction from "@/components/shared/EditDeleteAction";
 
 interface PostProps {
   params: { id: string };
+  searchParams: { filter: string };
 }
 
-const Post = async ({ params }: PostProps) => {
+const Post = async ({ params, searchParams }: PostProps) => {
   const result = await getPostById({ postId: params.id });
   const { userId: clerkId } = auth();
 
@@ -137,6 +138,7 @@ const Post = async ({ params }: PostProps) => {
         postId={result._id}
         userId={dbUser._id}
         numberOfComments={result.comments.length}
+        filter={searchParams?.filter}
       />
 
       <CommentForm

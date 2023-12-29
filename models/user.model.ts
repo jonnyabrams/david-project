@@ -16,6 +16,10 @@ export interface IUser extends Document {
   website?: string;
   reputation?: number;
   savedPosts?: Schema.Types.ObjectId[];
+  followers?: Schema.Types.ObjectId[];
+  following?: Schema.Types.ObjectId[];
+  followerCount: number;
+  followingCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +41,10 @@ const UserSchema = new Schema(
     website: { type: String },
     reputation: { type: Number, default: 0 },
     savedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    followerCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
     isOnboarded: { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -1,36 +1,37 @@
 export const CommentFilters = [
-  { name: "Highest Upvotes", value: "highestUpvotes" },
-  { name: "Lowest Upvotes", value: "lowestUpvotes" },
-  { name: "Most Recent", value: "recent" },
-  { name: "Oldest", value: "old" },
+  { name: "Most Upvoted", value: "most_upvotes" },
+  { name: "Newest", value: "newest" },
+  { name: "Oldest", value: "oldest" },
 ];
 
 export const UserFilters = [
+  { name: "Recommended", value: "recommended" },
   { name: "New Users", value: "new_users" },
   { name: "Old Users", value: "old_users" },
   { name: "Top Contributors", value: "top_contributors" },
 ];
 
 export const PostFilters = [
-  { name: "Most Recent", value: "most_recent" },
+  { name: "Newest", value: "newest" },
   { name: "Oldest", value: "oldest" },
-  { name: "Most Upvotes", value: "most_upvotes" },
+  { name: "Most Upvoted", value: "most_upvoted" },
   { name: "Most Viewed", value: "most_viewed" },
   { name: "Most Comments", value: "most_comments" },
 ];
 
 export const TagFilters = [
   { name: "Popular", value: "popular" },
-  { name: "Recent", value: "recent" },
-  { name: "Name", value: "name" },
-  { name: "Old", value: "old" },
+  { name: "Newest", value: "newest" },
+  { name: "Oldest", value: "oldest" },
+  { name: "Alphabetical", value: "alphabetical" },
 ];
 
 export const HomePageFilters = [
   { name: "Newest", value: "newest" },
+  { name: "Most Upvoted", value: "most_upvoted" },
+  { name: "Most Comments", value: "most_comments" },
+  { name: "Most Viewed", value: "most_viewed" },
   { name: "Recommended", value: "recommended" },
-  { name: "Frequent", value: "frequent" },
-  { name: "Unanswered", value: "unanswered" },
 ];
 
 export const GlobalSearchFilters = [

@@ -12,6 +12,9 @@ export interface IPost extends Document {
   comments: Schema.Types.ObjectId[];
   picture: string;
   pdf: { name: string; url: string };
+  upvoteCount: number;
+  downvoteCount: number;
+  commentCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +34,9 @@ const PostSchema = new Schema(
       name: { type: String },
       url: { type: String },
     },
+    upvoteCount: { type: Number, default: 0 },
+    downvoteCount: { type: Number, default: 0 },
+    commentCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

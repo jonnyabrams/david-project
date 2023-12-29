@@ -22,22 +22,41 @@ export const getPosts = async (params: GetPostsParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
 
     // initialize an empty query object
-    const query: FilterQuery<typeof Post> = {}
+    const query: FilterQuery<typeof Post> = {};
 
     if (searchQuery) {
       query.$or = [
-        { title: {$regex: new RegExp(searchQuery, "i")}},
-        { content: {$regex: new RegExp(searchQuery, "i")}},
-      ]
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { content: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    let sortOptions = {};
+
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "most_viewed":
+        sortOptions = { views: -1 };
+        break;
+      case "most_upvoted":
+        sortOptions = { upvoteCount: -1 };
+        break;
+      case "most_comments":
+        sortOptions = { commentCount: -1 };
+        break;
+      default:
+        break;
     }
 
     const posts = await Post.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     return { posts };
   } catch (error) {
@@ -73,7 +92,7 @@ export const createPost = async (params: CreatePostParams) => {
             $regex: new RegExp(`^${tag.value}$`, "i"),
           },
         },
-        { $setOnInsert: { name: tag.value }, $push: { posts: post._id } },
+        { $setOnInsert: { name: tag.value }, $push: { posts: post._id }, $inc: { postCount: 1 } },
         { upsert: true, new: true }
       );
 
@@ -123,14 +142,18 @@ export const upvotePost = async (params: PostVoteParams) => {
     let updateQuery = {};
 
     if (userHasUpvoted) {
-      updateQuery = { $pull: { upvotes: userId } };
+      updateQuery = { $pull: { upvotes: userId }, $inc: { upvoteCount: -1 } };
     } else if (userHasDownvoted) {
       updateQuery = {
         $pull: { downvotes: userId },
         $push: { upvotes: userId },
+        $inc: { downvoteCount: -1, upvoteCount: 1 },
       };
     } else {
-      updateQuery = { $addToSet: { upvotes: userId } };
+      updateQuery = {
+        $addToSet: { upvotes: userId },
+        $inc: { upvoteCount: 1 },
+      };
     }
 
     const post = await Post.findByIdAndUpdate(postId, updateQuery, {
@@ -159,14 +182,15 @@ export const downvotePost = async (params: PostVoteParams) => {
     let updateQuery = {};
 
     if (userHasDownvoted) {
-      updateQuery = { $pull: { downvotes: userId } };
+      updateQuery = { $pull: { downvotes: userId }, $inc: { downvoteCount: -1 } };
     } else if (userHasUpvoted) {
       updateQuery = {
         $pull: { upvotes: userId },
         $push: { downvotes: userId },
+        $inc: { upvoteCount: -1, downvoteCount: 1 }
       };
     } else {
-      updateQuery = { $addToSet: { downvotes: userId } };
+      updateQuery = { $addToSet: { downvotes: userId }, $inc: { downvoteCount: 1 } };
     }
 
     const post = await Post.findByIdAndUpdate(postId, updateQuery, {
@@ -199,7 +223,7 @@ export const deletePost = async (params: DeletePostParams) => {
     await Interaction.deleteMany({ post: postId });
 
     // update tags to no longer include this post
-    await Tag.updateMany({ posts: postId }, { $pull: { posts: postId } });
+    await Tag.updateMany({ posts: postId }, { $pull: { posts: postId }, $inc: { postCount: -1 } });
 
     revalidatePath(path);
   } catch (error) {

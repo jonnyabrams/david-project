@@ -9,6 +9,8 @@ export interface IComment extends Document {
   content: string;
   upvotes: Schema.Types.ObjectId[];
   downvotes: Schema.Types.ObjectId[];
+  upvoteCount: number;
+  downvoteCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +22,8 @@ const CommentSchema = new Schema(
     content: { type: String, required: true },
     upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    upvoteCount: { type: Number, default: 0 },
+    downvotsCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -13,15 +13,16 @@ interface CommentsProps {
   userId: string;
   numberOfComments: number;
   page?: number;
-  filter?: number;
+  filter?: string;
 }
 
 const Comments = async ({
   postId,
   userId,
   numberOfComments,
+  filter
 }: CommentsProps) => {
-  const result = await getComments({ postId });
+  const result = await getComments({ postId, filter });
 
   return (
     <div className="mt-11">

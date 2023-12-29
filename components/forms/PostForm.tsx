@@ -361,7 +361,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           </Button>
 
           <Link
-            href={`/post/${parsedPostDetails._id}`}
+            href={`/post/${parsedPostDetails?._id}`}
             className="text-dark200_light900 cursor-pointer rounded-md border p-1.5 text-xs"
           >
             Cancel

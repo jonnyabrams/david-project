@@ -12,7 +12,6 @@ import {
 } from "./shared.types";
 import Post from "@/models/post.model";
 import Interaction from "@/models/interaction.model";
-import Tag from "@/models/tag.model";
 
 export const createComment = async (params: CreateCommentParams) => {
   try {
@@ -27,7 +26,7 @@ export const createComment = async (params: CreateCommentParams) => {
     });
 
     // add comment to the post's comments array
-    await Post.findByIdAndUpdate(post, { $push: { comments: newComment._id } });
+    await Post.findByIdAndUpdate(post, { $push: { comments: newComment._id }, $inc: { commentCount: 1 } });
 
     // TODO: add interaction to increase reputation
 
@@ -42,11 +41,27 @@ export const getComments = async (params: GetCommentsParams) => {
   try {
     connectToDatabase();
 
-    const { postId } = params;
+    const { postId, filter } = params;
+
+    let sortOptions = {};
+
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortOptions = { createdAt: 1 };
+        break;
+      case "most_upvoted":
+        sortOptions = { upvotesCount: -1 };
+        break;
+      default:
+        break;
+    }
 
     const comments = await Comment.find({ post: postId })
       .populate("author", "_id clerkId salutation firstName surname picture")
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     return { comments };
   } catch (error) {
@@ -65,14 +80,15 @@ export const upvoteComment = async (params: CommentVoteParams) => {
     let updateQuery = {};
 
     if (userHasUpvoted) {
-      updateQuery = { $pull: { upvotes: userId } };
+      updateQuery = { $pull: { upvotes: userId }, $inc: { upvoteCount: -1 } };
     } else if (userHasDownvoted) {
       updateQuery = {
         $pull: { downvotes: userId },
         $push: { upvotes: userId },
+        $inc: { downvoteCount: -1, upvoteCount: 1 }
       };
     } else {
-      updateQuery = { $addToSet: { upvotes: userId } };
+      updateQuery = { $addToSet: { upvotes: userId }, $inc: { upvoteCount: 1 } };
     }
 
     const comment = await Comment.findByIdAndUpdate(commentId, updateQuery, {
@@ -146,7 +162,7 @@ export const deleteComment = async (params: DeleteCommentParams) => {
     // pull comment from post
     await Post.updateMany(
       { _id: comment.post },
-      { $pull: { comments: commentId } }
+      { $pull: { comments: commentId }, $inc: { commentCount: -1 } }
     );
 
     // delete its interactions

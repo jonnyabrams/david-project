@@ -9,7 +9,8 @@ import { SearchParamsProps } from "@/types";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
   const result = await getAllUsers({
-    searchQuery: searchParams.q
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
   });
 
   return (
@@ -33,10 +34,15 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
 
       <section className="mt-12 flex flex-wrap gap-4">
         {result.users.length > 0 ? (
-          result.users.map((user) => (
-            <UserCard key={user._id} user={user} />
-          ))
-        ) : (<div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center"><p>No users found</p><Link className="mt-1 font-bold text-accent-blue" href="/sign-up">Become the first!</Link></div>)}
+          result.users.map((user) => <UserCard key={user._id} user={user} />)
+        ) : (
+          <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
+            <p>No users found</p>
+            <Link className="mt-1 font-bold text-accent-blue" href="/sign-up">
+              Become the first!
+            </Link>
+          </div>
+        )}
       </section>
     </>
   );

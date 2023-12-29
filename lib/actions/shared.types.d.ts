@@ -70,7 +70,7 @@ export interface CreateCommentParams {
 
 export interface GetCommentsParams {
   postId: string;
-  sortBy?: string;
+  filter?: string;
   page?: number;
   pageSize?: number;
 }
