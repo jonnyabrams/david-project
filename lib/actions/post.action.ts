@@ -22,7 +22,10 @@ export const getPosts = async (params: GetPostsParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter } = params;
+    const { searchQuery, filter, page = 1, limit = 3 } = params;
+
+    // calculate number of posts to skip based on page number and page size
+    const skipAmount = (page - 1) * limit;
 
     // initialize an empty query object
     const query: FilterQuery<typeof Post> = {};
@@ -56,6 +59,8 @@ export const getPosts = async (params: GetPostsParams) => {
     const posts = await Post.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
+      .skip(skipAmount)
+      .limit(limit)
       .sort(sortOptions);
 
     return { posts };
@@ -92,7 +97,11 @@ export const createPost = async (params: CreatePostParams) => {
             $regex: new RegExp(`^${tag.value}$`, "i"),
           },
         },
-        { $setOnInsert: { name: tag.value }, $push: { posts: post._id }, $inc: { postCount: 1 } },
+        {
+          $setOnInsert: { name: tag.value },
+          $push: { posts: post._id },
+          $inc: { postCount: 1 },
+        },
         { upsert: true, new: true }
       );
 
@@ -182,15 +191,21 @@ export const downvotePost = async (params: PostVoteParams) => {
     let updateQuery = {};
 
     if (userHasDownvoted) {
-      updateQuery = { $pull: { downvotes: userId }, $inc: { downvoteCount: -1 } };
+      updateQuery = {
+        $pull: { downvotes: userId },
+        $inc: { downvoteCount: -1 },
+      };
     } else if (userHasUpvoted) {
       updateQuery = {
         $pull: { upvotes: userId },
         $push: { downvotes: userId },
-        $inc: { upvoteCount: -1, downvoteCount: 1 }
+        $inc: { upvoteCount: -1, downvoteCount: 1 },
       };
     } else {
-      updateQuery = { $addToSet: { downvotes: userId }, $inc: { downvoteCount: 1 } };
+      updateQuery = {
+        $addToSet: { downvotes: userId },
+        $inc: { downvoteCount: 1 },
+      };
     }
 
     const post = await Post.findByIdAndUpdate(postId, updateQuery, {
@@ -223,7 +238,10 @@ export const deletePost = async (params: DeletePostParams) => {
     await Interaction.deleteMany({ post: postId });
 
     // update tags to no longer include this post
-    await Tag.updateMany({ posts: postId }, { $pull: { posts: postId }, $inc: { postCount: -1 } });
+    await Tag.updateMany(
+      { posts: postId },
+      { $pull: { posts: postId }, $inc: { postCount: -1 } }
+    );
 
     revalidatePath(path);
   } catch (error) {
