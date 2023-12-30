@@ -12,11 +12,13 @@ import PostCard from "@/components/cards/PostCard";
 import { getPosts } from "@/lib/actions/post.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getPosts({
     searchQuery: searchParams.q,
-    filter: searchParams.filter
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
   });
 
   const { userId } = auth();
@@ -79,6 +81,13 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
             buttonText="Create a post"
           />
         )}
+      </div>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

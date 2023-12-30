@@ -22,7 +22,7 @@ export const getPosts = async (params: GetPostsParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter, page = 1, limit = 3 } = params;
+    const { searchQuery, filter, page = 1, limit = 20 } = params;
 
     // calculate number of posts to skip based on page number and page size
     const skipAmount = (page - 1) * limit;
@@ -63,7 +63,11 @@ export const getPosts = async (params: GetPostsParams) => {
       .limit(limit)
       .sort(sortOptions);
 
-    return { posts };
+    const totalPosts = await Post.countDocuments(query);
+
+    const isNext = totalPosts > skipAmount + posts.length;
+
+    return { posts, isNext };
   } catch (error) {
     console.error(error);
     throw error;
