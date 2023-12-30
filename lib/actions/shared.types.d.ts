@@ -4,7 +4,7 @@ import { IUser } from "@/models/user.model";
 
 export interface GetPostsParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   searchQuery?: string;
   filter?: string;
 }

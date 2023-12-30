@@ -12,11 +12,13 @@ import PostCard from "@/components/cards/PostCard";
 import { getPosts } from "@/lib/actions/post.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
+import LoadMorePosts from "@/components/scroll/LoadMorePosts";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getPosts({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter
+    searchQuery: searchParams?.q,
+    filter: searchParams?.filter,
+    page: searchParams?.page ? +searchParams?.page : 1,
   });
 
   const { userId } = auth();
@@ -80,6 +82,8 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
+
+      <LoadMorePosts />
     </>
   );
 };
