@@ -5,6 +5,7 @@ export interface IUser extends Document {
   salutation?: string;
   firstName?: string;
   surname?: string;
+  fullName?: string;
   email: string;
   password?: string;
   bio?: string;
@@ -30,6 +31,7 @@ const UserSchema = new Schema(
     salutation: { type: String },
     firstName: { type: String },
     surname: { type: String },
+    fullName: { type: String },
     email: { type: String, required: true, unique: true },
     trust: { type: String },
     specialty: { type: String },

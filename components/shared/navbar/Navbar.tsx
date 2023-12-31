@@ -17,13 +17,13 @@ const Navbar = () => {
           alt="Share Our Best"
         />
 
-        <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden">
+        <p className="h2-bold mr-8 font-spaceGrotesk text-dark-100 dark:text-light-900 max-md:hidden">
           ShareOur<span className="text-primary-500">Best</span>
         </p>
       </Link>
 
       <GlobalSearch />
-      
+
       <div className="flex-between gap-5">
         <Theme />
         <SignedIn>

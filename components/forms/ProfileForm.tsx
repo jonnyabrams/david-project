@@ -80,6 +80,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
       salutation: values.salutation,
       firstName: values.firstName,
       surname: values.surname,
+      fullName: `${values.salutation} ${values.firstName} ${values.surname}`,
       trust: values.trust,
       specialty: values.specialty,
       // make empty string if change to specialty without subspecialty otherwise prev value will remain

@@ -19,7 +19,7 @@ export interface CreatePostParams {
   tags: { label: string; value: string }[];
   author: Schema.Types.ObjectId | IUser;
   picture: string | undefined;
-  pdf: {name: string, url: string} | undefined;
+  pdf: { name: string; url: string } | undefined;
   path;
 }
 
@@ -133,11 +133,16 @@ export interface EditPostParams {
   title: string;
   content: string;
   picture: string | undefined;
-  pdf: {name: string, url: string} | undefined;
+  pdf: { name: string; url: string } | undefined;
   path: string;
 }
 
 export interface DeleteCommentParams {
   commentId: string;
   path: string;
+}
+
+export interface SearchParams {
+  query?: string | null;
+  type?: string | null;
 }
