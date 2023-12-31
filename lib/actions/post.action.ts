@@ -117,8 +117,20 @@ export const createPost = async (params: CreatePostParams) => {
       $push: { tags: { $each: tagDocuments } },
     });
 
+    await Interaction.create({
+      user: author,
+      action: "create_post",
+      post: post._id,
+      tags: tagDocuments,
+    });
+
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
+
     revalidatePath(path);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 export const getPostById = async (params: GetPostByIdParams) => {
@@ -177,7 +189,15 @@ export const upvotePost = async (params: PostVoteParams) => {
       throw new Error("Post not found");
     }
 
-    // increment author's reputation
+    // +1 reputation for giving an upvote
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: userHasUpvoted ? -1 : 1 },
+    });
+
+    // +10 reputation for receiving an upvote
+    await User.findByIdAndUpdate(post.author, {
+      $inc: { reputation: userHasUpvoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
@@ -220,7 +240,10 @@ export const downvotePost = async (params: PostVoteParams) => {
       throw new Error("Post not found");
     }
 
-    // increment author's reputation
+    // -10 reputation for receiving a downvote
+    await User.findByIdAndUpdate(post.author, {
+      $inc: { reputation: userHasDownvoted ? 10 : -10 },
+    });
 
     revalidatePath(path);
   } catch (error) {

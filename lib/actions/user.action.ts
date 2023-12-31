@@ -314,7 +314,7 @@ export const getUserPosts = async (params: GetUserStatsParams) => {
     const totalPosts = await Post.countDocuments({ author: userId });
 
     const userPosts = await Post.find({ author: userId })
-      .sort({ views: -1, upvotes: -1 })
+      .sort({ createdAt: -1, views: -1, upvotes: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate("tags", "_id name")

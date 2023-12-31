@@ -12,6 +12,7 @@ import {
 } from "./shared.types";
 import Post from "@/models/post.model";
 import Interaction from "@/models/interaction.model";
+import User from "@/models/user.model";
 
 export const createComment = async (params: CreateCommentParams) => {
   try {
@@ -26,12 +27,22 @@ export const createComment = async (params: CreateCommentParams) => {
     });
 
     // add comment to the post's comments array
-    await Post.findByIdAndUpdate(post, {
+    const postObject = await Post.findByIdAndUpdate(post, {
       $push: { comments: newComment._id },
       $inc: { commentCount: 1 },
     });
 
-    // TODO: add interaction to increase reputation
+    await Interaction.create({
+      user: author,
+      action: "create_comment",
+      post,
+      comment: newComment._id,
+      tags: postObject.tags
+    })
+
+    await User.findByIdAndUpdate(author, {
+      $inc: { reputation: 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
@@ -115,7 +126,15 @@ export const upvoteComment = async (params: CommentVoteParams) => {
       throw new Error("Comment not found");
     }
 
-    // increment author's reputation
+    // +2 reputation for upvoting a comment
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: userHasUpvoted ? -2 : 2 },
+    });
+
+    // +10 reputation for receiving an upvote
+    await User.findByIdAndUpdate(comment.author, {
+      $inc: { reputation: userHasUpvoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
@@ -152,7 +171,10 @@ export const downvoteComment = async (params: CommentVoteParams) => {
       throw new Error("Comment not found");
     }
 
-    // increment author's reputation
+    // -10 reputation for receiving a downvote
+    await User.findByIdAndUpdate(comment.author, {
+      $inc: { reputation: userHasDownvoted ? 10 : -10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
