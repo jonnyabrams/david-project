@@ -1,16 +1,17 @@
 import { getUserPosts } from "@/lib/actions/user.action";
-import { SearchParamsProps } from "@/types";
 import PostCard from "../cards/PostCard";
+import Pagination from "./Pagination";
 
-interface PostsTabProps extends SearchParamsProps {
+interface PostsTabProps {
   userId: string;
   clerkId?: string | null;
+  searchProps?: { [key: string]: string | undefined };
 }
 
-const PostsTab = async ({ searchParams, userId, clerkId }: PostsTabProps) => {
+const PostsTab = async ({ searchProps, userId, clerkId }: PostsTabProps) => {
   const result = await getUserPosts({
     userId,
-    page: 1,
+    page: searchProps?.page ? +searchProps.page : 1,
   });
 
   return (
@@ -29,6 +30,13 @@ const PostsTab = async ({ searchParams, userId, clerkId }: PostsTabProps) => {
           clerkId={clerkId}
         />
       ))}
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchProps?.page ? +searchProps.page : 1}
+          isNext={result.isNext}
+        />
+      </div>
     </>
   );
 };

@@ -1,5 +1,6 @@
 import PostCard from "@/components/cards/PostCard";
 import NoResults from "@/components/shared/NoResults";
+import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { getPostsByTagId } from "@/lib/actions/tag.action";
 import { URLProps } from "@/types";
@@ -7,7 +8,7 @@ import { URLProps } from "@/types";
 const PostsByTag = async ({ params, searchParams }: URLProps) => {
   const result = await getPostsByTagId({
     tagId: params.id,
-    page: 1,
+    page: searchParams.page ? +searchParams.page : 1,
     searchQuery: searchParams.q,
   });
 
@@ -46,6 +47,13 @@ const PostsByTag = async ({ params, searchParams }: URLProps) => {
         ) : (
           <NoResults title="Nothing here yet!" />
         )}
+      </div>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

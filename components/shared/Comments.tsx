@@ -7,12 +7,13 @@ import { CommentFilters } from "@/constants/filters";
 import { getComments } from "@/lib/actions/comment.action";
 import { getTimestamp } from "@/lib/utils";
 import Votes from "./Votes";
+import Pagination from "./Pagination";
 
 interface CommentsProps {
   postId: string;
   userId: string;
   numberOfComments: number;
-  page?: number;
+  page?: string;
   filter?: string;
 }
 
@@ -20,9 +21,10 @@ const Comments = async ({
   postId,
   userId,
   numberOfComments,
-  filter
+  filter,
+  page,
 }: CommentsProps) => {
-  const result = await getComments({ postId, filter });
+  const result = await getComments({ postId, filter, page: page ? +page : 1 });
 
   return (
     <div className="mt-11">
@@ -77,6 +79,10 @@ const Comments = async ({
             </div>
           </article>
         ))}
+      </div>
+
+      <div className="mt-10">
+        <Pagination pageNumber={page ? +page : 1} isNext={result.isNext} />
       </div>
     </div>
   );

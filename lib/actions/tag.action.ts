@@ -10,7 +10,7 @@ import {
   GetTopTagsForUserParams,
 } from "./shared.types";
 import Tag, { ITag } from "@/models/tag.model";
-import Post from "@/models/post.model";
+import Post, { IPost } from "@/models/post.model";
 
 export const getTopTagsForUser = async (params: GetTopTagsForUserParams) => {
   try {
@@ -39,7 +39,9 @@ export const getAllTags = async (params: GetAllTagsParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter } = params;
+    const { searchQuery, filter, page = 1, limit = 20 } = params;
+
+    const skipAmount = (page - 1) * limit;
 
     const query: FilterQuery<typeof Tag> = {};
 
@@ -66,9 +68,15 @@ export const getAllTags = async (params: GetAllTagsParams) => {
         break;
     }
 
-    const tags = await Tag.find(query).sort(sortOptions);
+    const tags = await Tag.find(query)
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(limit);
 
-    return { tags };
+    const totalTags = await Tag.countDocuments(query);
+
+    const isNext = totalTags > skipAmount + tags.length;
+    return { tags, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -79,7 +87,9 @@ export const getPostsByTagId = async (params: GetPostsByTagIdParams) => {
   try {
     connectToDatabase();
 
-    const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+    const { tagId, page = 1, limit = 20, searchQuery } = params;
+
+    const skipAmount = (page - 1) * limit;
 
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
 
@@ -96,6 +106,8 @@ export const getPostsByTagId = async (params: GetPostsByTagIdParams) => {
         : {},
       options: {
         sort: { createdAt: -1 },
+        skip: skipAmount,
+        limit,
       },
       populate: [
         {
@@ -115,9 +127,23 @@ export const getPostsByTagId = async (params: GetPostsByTagIdParams) => {
       throw new Error("Tag not found");
     }
 
+    // handles edge cases where isNext was true when it should have been false
+    const originalTag = await Tag.findById(tagId);
+    const totalTagPosts = searchQuery
+      ? originalTag.posts.filter(
+          (post: IPost) =>
+            (post.title && post.title.match(new RegExp(searchQuery, "i"))) ||
+            (post.content && post.content.match(new RegExp(searchQuery, "i")))
+        ).length
+      : originalTag.posts.length;
+    const totalPages = Math.ceil(totalTagPosts / limit);
+    const isLastPage = page >= totalPages;
+
+    const isNext = !isLastPage && originalTag.posts.length > limit;
+
     const posts = tag.posts;
 
-    return { tagTitle: tag.name, posts };
+    return { tagTitle: tag.name, posts, isNext };
   } catch (error) {
     console.log(error);
     throw error;

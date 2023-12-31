@@ -1,20 +1,21 @@
 import { getUserComments } from "@/lib/actions/user.action";
-import { SearchParamsProps } from "@/types";
 import CommentCard from "../cards/CommentCard";
+import Pagination from "./Pagination";
 
-interface CommentsTabProps extends SearchParamsProps {
+interface CommentsTabProps {
   userId: string;
   clerkId?: string | null;
+  searchProps?: { [key: string]: string | undefined };
 }
 
 const CommentsTab = async ({
-  searchParams,
+  searchProps,
   userId,
   clerkId,
 }: CommentsTabProps) => {
   const result = await getUserComments({
     userId,
-    page: 1,
+    page: searchProps?.page ? +searchProps.page : 1,
   });
 
   return (
@@ -30,6 +31,13 @@ const CommentsTab = async ({
           createdAt={comment.createdAt}
         />
       ))}
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchProps?.page ? +searchProps.page : 1}
+          isNext={result.isNext}
+        />
+      </div>
     </>
   );
 };

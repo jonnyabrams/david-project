@@ -7,6 +7,7 @@ import PostCard from "@/components/cards/PostCard";
 import { getSavedPosts } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs";
 import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
 const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();
@@ -16,7 +17,8 @@ const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
   const result = await getSavedPosts({
     clerkId: userId,
     searchQuery: searchParams.q,
-    filter: searchParams.filter
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
   });
 
   return (
@@ -58,6 +60,13 @@ const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
         ) : (
           <NoResults title="You don't have any saved posts yet!" />
         )}
+      </div>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

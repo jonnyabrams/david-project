@@ -26,7 +26,10 @@ export const createComment = async (params: CreateCommentParams) => {
     });
 
     // add comment to the post's comments array
-    await Post.findByIdAndUpdate(post, { $push: { comments: newComment._id }, $inc: { commentCount: 1 } });
+    await Post.findByIdAndUpdate(post, {
+      $push: { comments: newComment._id },
+      $inc: { commentCount: 1 },
+    });
 
     // TODO: add interaction to increase reputation
 
@@ -41,7 +44,9 @@ export const getComments = async (params: GetCommentsParams) => {
   try {
     connectToDatabase();
 
-    const { postId, filter } = params;
+    const { postId, filter, page = 1, limit = 10 } = params;
+
+    const skipAmount = (page - 1) * limit;
 
     let sortOptions = {};
 
@@ -61,9 +66,17 @@ export const getComments = async (params: GetCommentsParams) => {
 
     const comments = await Comment.find({ post: postId })
       .populate("author", "_id clerkId salutation firstName surname picture")
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(limit);
 
-    return { comments };
+    const totalComments = await Comment.countDocuments({
+      post: postId,
+    });
+
+    const isNext = totalComments > skipAmount + comments.length;
+
+    return { comments, isNext };
   } catch (error) {
     console.error(error);
     throw error;
@@ -85,10 +98,13 @@ export const upvoteComment = async (params: CommentVoteParams) => {
       updateQuery = {
         $pull: { downvotes: userId },
         $push: { upvotes: userId },
-        $inc: { downvoteCount: -1, upvoteCount: 1 }
+        $inc: { downvoteCount: -1, upvoteCount: 1 },
       };
     } else {
-      updateQuery = { $addToSet: { upvotes: userId }, $inc: { upvoteCount: 1 } };
+      updateQuery = {
+        $addToSet: { upvotes: userId },
+        $inc: { upvoteCount: 1 },
+      };
     }
 
     const comment = await Comment.findByIdAndUpdate(commentId, updateQuery, {

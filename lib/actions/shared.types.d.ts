@@ -44,14 +44,14 @@ export interface GetUserByIdParams {
 
 export interface GetAllUsersParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   filter?: string;
   searchQuery?: string;
 }
 
 export interface GetAllTagsParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   filter?: string;
   searchQuery?: string;
 }
@@ -72,7 +72,7 @@ export interface GetCommentsParams {
   postId: string;
   filter?: string;
   page?: number;
-  pageSize?: number;
+  limit?: number;
 }
 
 export interface PostVoteParams {
@@ -100,7 +100,7 @@ export interface ToggleSavePostParams {
 export interface GetSavedPostsParams {
   clerkId: string;
   page?: number;
-  pageSize?: number;
+  limit?: number;
   filter?: string;
   searchQuery?: string;
 }
@@ -113,14 +113,14 @@ export interface ViewPostParams {
 export interface GetPostsByTagIdParams {
   tagId: string;
   page?: number;
-  pageSize?: number;
+  limit?: number;
   searchQuery?: string;
 }
 
 export interface GetUserStatsParams {
   userId: string;
   page?: number;
-  pageSize?: number;
+  limit?: number;
 }
 
 export interface DeletePostParams {

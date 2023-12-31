@@ -15,7 +15,7 @@ import {
   ToggleSavePostParams,
   UpdateUserParams,
 } from "./shared.types";
-import Post from "@/models/post.model";
+import Post, { IPost } from "@/models/post.model";
 import Tag from "@/models/tag.model";
 import Comment from "@/models/comment.model";
 
@@ -94,7 +94,10 @@ export const getAllUsers = async (params: GetAllUsersParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter } = params;
+    const { searchQuery, filter, page = 1, limit = 20 } = params;
+
+    // calculate number of users to skip based on page number and page size
+    const skipAmount = (page - 1) * limit;
 
     const query: FilterQuery<typeof User> = {};
 
@@ -132,9 +135,16 @@ export const getAllUsers = async (params: GetAllUsersParams) => {
         break;
     }
 
-    const users = await User.find(query).sort(sortOptions);
+    const users = await User.find(query)
+      .skip(skipAmount)
+      .limit(limit)
+      .sort(sortOptions);
 
-    return { users };
+    const totalUsers = await User.countDocuments(query);
+
+    const isNext = totalUsers > skipAmount + users.length;
+
+    return { users, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -184,7 +194,10 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
   try {
     connectToDatabase();
 
-    const { clerkId, searchQuery, filter } = params;
+    const { clerkId, searchQuery, filter, page = 1, limit = 20 } = params;
+
+    // calculate number of users to skip based on page number and page size
+    const skipAmount = (page - 1) * limit;
 
     // initialize an empty query object
     const query: FilterQuery<typeof Post> = {};
@@ -223,6 +236,8 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
       match: query,
       options: {
         sort: sortOptions,
+        skip: skipAmount,
+        limit,
       },
       populate: [
         {
@@ -242,9 +257,24 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
       throw new Error("User not found");
     }
 
+    // handles edge cases where isNext was true when it should have been false
+    const originalUser = await User.findOne({ clerkId });
+    const totalSavedPosts = searchQuery
+      ? originalUser.savedPosts.filter(
+          (post: IPost) =>
+            (post.title && post.title.match(new RegExp(searchQuery, "i"))) ||
+            (post.content && post.content.match(new RegExp(searchQuery, "i")))
+        ).length
+      : originalUser.savedPosts.length;
+
+    const totalPages = Math.ceil(totalSavedPosts / limit);
+    const isLastPage = page >= totalPages;
+
+    const isNext = !isLastPage && totalSavedPosts > limit;
+
     const savedPosts = user.savedPosts;
 
-    return { posts: savedPosts };
+    return { posts: savedPosts, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -277,16 +307,22 @@ export const getUserPosts = async (params: GetUserStatsParams) => {
   try {
     connectToDatabase();
 
-    const { userId, page = 1, pageSize = 10 } = params;
+    const { userId, page = 1, limit = 10 } = params;
+
+    const skipAmount = (page - 1) * limit;
 
     const totalPosts = await Post.countDocuments({ author: userId });
 
     const userPosts = await Post.find({ author: userId })
       .sort({ views: -1, upvotes: -1 })
+      .skip(skipAmount)
+      .limit(limit)
       .populate("tags", "_id name")
       .populate("author", "_id clerkId salutation firstName surname picture");
 
-    return { totalPosts, posts: userPosts };
+    const isNext = totalPosts > skipAmount + userPosts.length;
+
+    return { totalPosts, posts: userPosts, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -297,16 +333,22 @@ export const getUserComments = async (params: GetUserStatsParams) => {
   try {
     connectToDatabase();
 
-    const { userId, page = 1, pageSize = 10 } = params;
+    const { userId, page = 1, limit = 10 } = params;
+
+    const skipAmount = (page - 1) * limit;
 
     const totalComments = await Comment.countDocuments({ author: userId });
 
     const userComments = await Comment.find({ author: userId })
       .sort({ upvotes: -1 })
+      .skip(skipAmount)
+      .limit(limit)
       .populate("post", "_id title")
       .populate("author", "_id clerkId salutation firstName surname picture");
 
-    return { totalComments, comments: userComments };
+    const isNext = totalComments > skipAmount + userComments.length;
+
+    return { totalComments, comments: userComments, isNext };
   } catch (error) {
     console.log(error);
     throw error;

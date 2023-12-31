@@ -16,7 +16,7 @@ import EditDeleteAction from "@/components/shared/EditDeleteAction";
 
 interface PostProps {
   params: { id: string };
-  searchParams: { filter: string };
+  searchParams: { [key: string]: string | undefined };
 }
 
 const Post = async ({ params, searchParams }: PostProps) => {
@@ -112,7 +112,7 @@ const Post = async ({ params, searchParams }: PostProps) => {
         />
       )}
 
-      {(result.pdf && result.pdf.url )&& (
+      {result.pdf && result.pdf.url && (
         <a href={result.pdf.url} target="_blank">
           <div className="mt-6 flex cursor-pointer items-center gap-2">
             <FileText className="text-dark300_light900" />
@@ -139,6 +139,7 @@ const Post = async ({ params, searchParams }: PostProps) => {
         userId={dbUser._id}
         numberOfComments={result.comments.length}
         filter={searchParams?.filter}
+        page={searchParams?.page}
       />
 
       <CommentForm
