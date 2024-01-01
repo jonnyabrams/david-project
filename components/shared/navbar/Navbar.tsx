@@ -1,15 +1,25 @@
-import { SignedIn, currentUser } from "@clerk/nextjs";
+import { SignOutButton, SignedIn, currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
 import MobileNav from "./MobileNav";
 import Theme from "./Theme";
 import { getUserById } from "@/lib/actions/user.action";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = async () => {
   const user = await currentUser();
 
   const dbUser = user ? await getUserById({ userId: user.id }) : null;
+
+  const dropdownMenuItemStyles = "cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
 
   return (
     <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
@@ -40,15 +50,37 @@ const Navbar = async () => {
               },
             }}
           /> */}
-          <Link href={`/profile/${user?.id}`}>
-          <Image
-            src={dbUser.picture}
-            width={36}
-            height={36}
-            className="rounded-full"
-            alt="profile"
-          />
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none">
+              <Image
+                src={dbUser?.picture}
+                width={36}
+                height={36}
+                className="rounded-full"
+                alt="profile"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="text-dark500_light700 small-regular border-none bg-light-900 focus:outline-none active:outline-none dark:bg-dark-300">
+              <DropdownMenuLabel>{dbUser?.fullName}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className={dropdownMenuItemStyles}>
+                <Link href={`/profile/${user?.id}`}>Your Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className={dropdownMenuItemStyles}>
+                <SignOutButton>Sign Out</SignOutButton>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* <Link href={`/profile/${user?.id}`}>
+            <Image
+              src={dbUser.picture}
+              width={36}
+              height={36}
+              className="rounded-full"
+              alt="profile"
+            />
+          </Link> */}
         </SignedIn>
 
         <MobileNav />
