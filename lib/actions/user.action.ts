@@ -295,8 +295,10 @@ export const getUserInfo = async (params: GetUserByIdParams) => {
 
     const totalPosts = await Post.countDocuments({ author: user._id });
     const totalComments = await Comment.countDocuments({ author: user._id });
+    const totalFollowers = user.followers.length;
+    const totalFollowing = user.following.length;
 
-    return { user, totalPosts, totalComments };
+    return { user, totalPosts, totalComments, totalFollowers, totalFollowing };
   } catch (error) {
     console.log(error);
     throw error;

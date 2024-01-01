@@ -82,6 +82,8 @@ const Profile = async ({ params, searchParams }: URLProps) => {
       <Stats
         totalPosts={userInfo?.totalPosts}
         totalComments={userInfo?.totalComments}
+        totalFollowers={userInfo?.totalFollowers}
+        totalFollowing={userInfo?.totalFollowing}
       />
 
       <div className="mt-10 flex gap-10">
