@@ -14,6 +14,8 @@ import { getUserById } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import GlobalSearch from "@/components/shared/search/GlobalSearch";
+import { getPopularTags } from "@/lib/actions/tag.action";
+import RenderTag from "@/components/shared/RenderTag";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getPosts({
@@ -21,6 +23,8 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
   });
+
+  const popularTags = await getPopularTags();
 
   const { userId } = auth();
   if (!userId) return null;
@@ -32,10 +36,16 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
     <>
       <div className="mb-20">
         <div className="flex flex-col gap-4">
-          <p className="text-dark300_light700 paragraph-regular">
-            Find posts, users and specialties...
+          <p className="text-dark300_light700 h3-bold">
+            Find posts, users and tags...
           </p>
           <GlobalSearch />
+          <div className="flex items-center gap-3">
+            <p className="text-dark300_light700 text-xs">Trending tags:</p>
+            {popularTags.slice(0, 3).map((tag: any) => (
+              <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
+            ))}
+          </div>
         </div>
       </div>
       <div>

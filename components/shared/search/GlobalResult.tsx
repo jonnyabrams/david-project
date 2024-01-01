@@ -13,11 +13,7 @@ const GlobalResult = () => {
   const searchParams = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState([
-    { type: "post", id: 1, title: "Post 1" },
-    { type: "tag", id: 2, title: "Tag 1" },
-    { type: "user", id: 3, title: "User 1" },
-  ]);
+  const [result, setResult] = useState([]);
 
   const global = searchParams.get("global");
   const type = searchParams.get("type");
@@ -46,16 +42,16 @@ const GlobalResult = () => {
 
   const renderLink = (type: string, id: string) => {
     switch (type) {
-      case 'post':
-        return `/post/${id}`
-      case 'comment':
-        return `/post/${id}`
-      case 'user':
-        return `/profile/${id}`
-      case 'tag':
-        return `/tags/${id}`
+      case "post":
+        return `/post/${id}`;
+      case "comment":
+        return `/post/${id}`;
+      case "user":
+        return `/profile/${id}`;
+      case "tag":
+        return `/tags/${id}`;
       default:
-        return '/'
+        return "/";
     }
   };
 
