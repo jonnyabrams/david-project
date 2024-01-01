@@ -69,7 +69,7 @@ const MobileNav = () => {
       >
         <Link href="/" className="flex flex-1 items-center gap-2">
           <Image
-            src="/assets/images/me.jpeg"
+            src="/assets/images/stethoscope.jpeg"
             width={26}
             height={26}
             alt="Share Our Best"
