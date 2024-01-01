@@ -19,7 +19,8 @@ const Navbar = async () => {
 
   const dbUser = user ? await getUserById({ userId: user.id }) : null;
 
-  const dropdownMenuItemStyles = "cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
+  const dropdownMenuItemStyles =
+    "cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400";
 
   return (
     <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
@@ -66,7 +67,10 @@ const Navbar = async () => {
               <DropdownMenuItem className={dropdownMenuItemStyles}>
                 <Link href={`/profile/${user?.id}`}>Your Profile</Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator>
+                {" "}
+                <div className="h-[1px] bg-light-700/50 dark:bg-gray-100 dark:opacity-25" />
+              </DropdownMenuSeparator>
               <DropdownMenuItem className={dropdownMenuItemStyles}>
                 <SignOutButton>Sign Out</SignOutButton>
               </DropdownMenuItem>
