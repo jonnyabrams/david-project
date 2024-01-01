@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import MobileNav from "./MobileNav";
 import Theme from "./Theme";
-import GlobalSearch from "../search/GlobalSearch";
 
 const Navbar = () => {
   return (
@@ -17,12 +16,10 @@ const Navbar = () => {
           alt="Share Our Best"
         />
 
-        <p className="h2-bold mr-8 font-spaceGrotesk text-dark-100 dark:text-light-900 max-md:hidden">
+        <p className="h2-bold mr-8 font-spaceGrotesk text-dark-100 dark:text-light-900 max-xs:hidden">
           ShareOur<span className="text-primary-500">Best</span>
         </p>
       </Link>
-
-      <GlobalSearch />
 
       <div className="flex-between gap-5">
         <Theme />
