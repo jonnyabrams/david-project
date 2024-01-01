@@ -8,6 +8,7 @@ import User from "@/models/user.model";
 import {
   CreateUserParams,
   DeleteUserParams,
+  FollowUserParams,
   GetAllUsersParams,
   GetSavedPostsParams,
   GetUserByIdParams,
@@ -353,6 +354,63 @@ export const getUserComments = async (params: GetUserStatsParams) => {
     return { totalComments, comments: userComments, isNext };
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+};
+
+export const followUser = async (params: FollowUserParams) => {
+  try {
+    connectToDatabase();
+
+    const { followingUserId, followedUserId, userAlreadyFollows, path } =
+      params;
+
+    const followingUser = await User.findOne({ clerkId: followingUserId });
+    const followedUser = await User.findOne({ clerkId: followedUserId });
+
+    let followingUserUpdateQuery = {};
+
+    let followedUserUpdateQuery = {};
+
+    if (userAlreadyFollows) {
+      followingUserUpdateQuery = {
+        $pull: { following: followedUser._id },
+        $inc: { followingCount: -1, reputation: -2 },
+      };
+      followedUserUpdateQuery = {
+        $pull: { followers: followingUser._id },
+        $inc: { followerCount: -1, reputation: -10 },
+      };
+    } else {
+      followingUserUpdateQuery = {
+        $addToSet: { following: followedUser._id },
+        $inc: { followingCount: 1, reputation: 2 },
+      };
+      followedUserUpdateQuery = {
+        $addToSet: { followers: followingUser._id },
+        $inc: { followerCount: 1, reputation: 10 },
+      };
+    }
+
+    await User.findByIdAndUpdate(followingUser._id, followingUserUpdateQuery, {
+      new: true,
+    });
+
+    if (!followingUser) {
+      throw new Error("Following user not found");
+    }
+
+    await User.findByIdAndUpdate(followedUser._id, followedUserUpdateQuery, {
+      new: true,
+    });
+
+    if (!followedUser) {
+      throw new Error("Followed user not found");
+    }
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 };

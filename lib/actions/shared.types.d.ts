@@ -39,7 +39,7 @@ export interface DeleteUserParams {
 }
 
 export interface GetUserByIdParams {
-  userId: string;
+  userId: string | null;
 }
 
 export interface GetAllUsersParams {
@@ -145,4 +145,11 @@ export interface DeleteCommentParams {
 export interface SearchParams {
   query?: string | null;
   type?: string | null;
+}
+
+export interface FollowUserParams {
+  followingUserId: string;
+  followedUserId: string;
+  userAlreadyFollows: boolean;
+  path: string;
 }

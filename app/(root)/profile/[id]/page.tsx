@@ -2,7 +2,7 @@ import Image from "next/image";
 import { SignedIn, auth } from "@clerk/nextjs";
 import Link from "next/link";
 
-import { getUserInfo } from "@/lib/actions/user.action";
+import { getUserById, getUserInfo } from "@/lib/actions/user.action";
 import { URLProps } from "@/types";
 import { getFullName, getJoinedDate, getUserLabel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,16 @@ import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
 import PostsTab from "@/components/shared/PostsTab";
 import CommentsTab from "@/components/shared/CommentsTab";
+import FollowButton from "@/components/shared/FollowButton";
 
 const Profile = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
+  // get info about user whose profile it is
   const userInfo = await getUserInfo({ userId: params.id });
+
+  // get logged in user
+  const currentUser = await getUserById({userId: clerkId})
+  const userAlreadyFollows = userInfo.user.followers.includes(currentUser._id);
 
   return (
     <>
@@ -68,12 +74,18 @@ const Profile = async ({ params, searchParams }: URLProps) => {
 
         <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
           <SignedIn>
-            {clerkId === userInfo?.user.clerkId && (
+            {clerkId === userInfo?.user.clerkId ? (
               <Link href="/profile/edit">
                 <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
                   Edit Profile
                 </Button>
               </Link>
+            ) : (
+              <FollowButton
+                followingUserId={clerkId}
+                followedUserId={params.id}
+                userAlreadyFollows={userAlreadyFollows}
+              />
             )}
           </SignedIn>
         </div>
