@@ -65,7 +65,7 @@ const MobileNav = () => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="background-light900_dark200 border-none"
+        className="background-light900_dark200 overflow-y-auto border-none"
       >
         <Link href="/" className="flex flex-1 items-center gap-2">
           <Image
@@ -86,7 +86,7 @@ const MobileNav = () => {
         </div>
 
         <SignedOut>
-          <div className="flex flex-col gap-3">
+          <div className="mt-4 flex flex-col gap-3">
             <SheetClose asChild>
               <Link href="/sign-in">
                 <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
