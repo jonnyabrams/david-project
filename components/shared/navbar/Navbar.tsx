@@ -1,11 +1,16 @@
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedIn, currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
 import MobileNav from "./MobileNav";
 import Theme from "./Theme";
+import { getUserById } from "@/lib/actions/user.action";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const user = await currentUser();
+
+  const dbUser = user ? await getUserById({ userId: user.id }) : null;
+
   return (
     <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
       <Link href="/" className="flex flex-1 items-center gap-2">
@@ -24,7 +29,7 @@ const Navbar = () => {
       <div className="flex-between gap-5">
         <Theme />
         <SignedIn>
-          <UserButton
+          {/* <UserButton
             afterSignOutUrl="/"
             appearance={{
               elements: {
@@ -34,7 +39,16 @@ const Navbar = () => {
                 colorPrimary: "#ff7000",
               },
             }}
+          /> */}
+          <Link href={`/profile/${user?.id}`}>
+          <Image
+            src={dbUser.picture}
+            width={36}
+            height={36}
+            className="rounded-full"
+            alt="profile"
           />
+          </Link>
         </SignedIn>
 
         <MobileNav />
