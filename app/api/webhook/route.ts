@@ -69,7 +69,6 @@ export async function POST(req: Request) {
   if (eventType === "user.updated") {
     const { id, email_addresses, image_url } = evt.data;
 
-    // create a new user in db
     const dbUser = await updateUser({
       clerkId: id,
       updateData: {
