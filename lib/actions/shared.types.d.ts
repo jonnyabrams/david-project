@@ -48,6 +48,13 @@ export interface GetAllUsersParams {
   filter?: string;
   searchQuery?: string;
 }
+export interface GetFollowsParams {
+  page?: number;
+  limit?: number;
+  filter?: string;
+  searchQuery?: string;
+  userId: string;
+}
 
 export interface GetAllTagsParams {
   page?: number;
