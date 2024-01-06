@@ -35,7 +35,7 @@ import { UploadButton } from "@/lib/uploadthing";
 interface ProfileFormProps {
   clerkId: string;
   user: string;
-  isOnboarding: boolean;
+  isOnboarding?: boolean;
 }
 
 const ProfileForm = ({
