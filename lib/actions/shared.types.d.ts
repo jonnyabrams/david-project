@@ -54,6 +54,7 @@ export interface GetFollowsParams {
   filter?: string;
   searchQuery?: string;
   userId: string;
+  type: string;
 }
 
 export interface GetAllTagsParams {

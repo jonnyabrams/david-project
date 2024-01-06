@@ -153,11 +153,11 @@ export const getAllUsers = async (params: GetAllUsersParams) => {
   }
 };
 
-export const getFollowers = async (params: GetFollowsParams) => {
+export const getFollows = async (params: GetFollowsParams) => {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter, page = 1, limit = 20, userId } = params;
+    const { searchQuery, filter, page = 1, limit = 20, userId, type } = params;
 
     // calculate number of users to skip based on page number and page size
     const skipAmount = (page - 1) * limit;
@@ -199,7 +199,7 @@ export const getFollowers = async (params: GetFollowsParams) => {
     }
 
     const user = await User.findById(userId).populate({
-      path: "followers",
+      path: type,
       match: query,
       options: {
         sort: sortOptions,
@@ -212,87 +212,14 @@ export const getFollowers = async (params: GetFollowsParams) => {
       throw new Error("User not found");
     }
 
-    const followers = user.followers
+    const follows = type === "followers" ? user.followers : user.following
 
-    const totalPages = Math.ceil(user.followers.length / limit);
+    const totalPages = Math.ceil(follows.length / limit);
     const isLastPage = page >= totalPages;
 
-    const isNext = !isLastPage && user.followers.length > limit;
+    const isNext = !isLastPage && follows.length > limit;
 
-    return { followers, isNext };
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-export const getFollowing = async (params: GetFollowsParams) => {
-  try {
-    connectToDatabase();
-
-    const { searchQuery, filter, page = 1, limit = 20, userId } = params;
-
-    // calculate number of users to skip based on page number and page size
-    const skipAmount = (page - 1) * limit;
-
-    const query: FilterQuery<typeof User> = {};
-
-    if (searchQuery) {
-      const searchTerms = searchQuery.split(/\s+/).filter(Boolean);
-
-      query.$and = searchTerms.map((term) => ({
-        $or: [
-          { salutation: { $regex: new RegExp(term, "i") } },
-          { firstName: { $regex: new RegExp(term, "i") } },
-          { surname: { $regex: new RegExp(term, "i") } },
-          { trust: { $regex: new RegExp(term, "i") } },
-          { specialty: { $regex: new RegExp(term, "i") } },
-          { subspecialty: { $regex: new RegExp(term, "i") } },
-        ],
-      }));
-    }
-
-    let sortOptions = {};
-
-    switch (filter) {
-      case "recommended":
-        sortOptions = {};
-        break;
-      case "new_users":
-        sortOptions = { createdAt: -1 };
-        break;
-      case "old_users":
-        sortOptions = { createdAt: 1 };
-        break;
-      case "top_contributors":
-        sortOptions = { reputation: -1 };
-        break;
-      default:
-        break;
-    }
-
-    const user = await User.findById(userId).populate({
-      path: "following",
-      match: query,
-      options: {
-        sort: sortOptions,
-        skip: skipAmount,
-        limit,
-      }
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const following = user.following
-
-    const totalPages = Math.ceil(user.following.length / limit);
-    const isLastPage = page >= totalPages;
-
-    const isNext = !isLastPage && user.following.length > limit;
-
-    return { following, isNext };
+    return { follows, isNext };
   } catch (error) {
     console.log(error);
     throw error;

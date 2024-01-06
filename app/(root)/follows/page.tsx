@@ -4,7 +4,7 @@ import UserCard from "@/components/cards/UserCard";
 import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { UserFilters } from "@/constants/filters";
-import { getFollowers, getFollowing, getUserById } from "@/lib/actions/user.action";
+import { getFollows, getUserById } from "@/lib/actions/user.action";
 import { SearchParamsProps, UserCardType } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,18 +13,20 @@ const Follows = async ({ searchParams }: SearchParamsProps) => {
   const { userId: clerkId } = auth();
   const currentUser = await getUserById({ userId: clerkId });
 
-  const followersResult = await getFollowers({
+  const followersResult = await getFollows({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
     userId: currentUser._id,
+    type: "followers",
   });
 
-  const followingResult = await getFollowing({
+  const followingResult = await getFollows({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
     userId: currentUser._id,
+    type: "following",
   });
 
   return (
@@ -58,8 +60,8 @@ const Follows = async ({ searchParams }: SearchParamsProps) => {
           </TabsList>
           <TabsContent value="followers">
             <section className="mt-12 flex flex-wrap gap-4">
-              {followersResult.followers.length > 0 ? (
-                followersResult.followers.map((follower: UserCardType) => (
+              {followersResult.follows.length > 0 ? (
+                followersResult.follows.map((follower: UserCardType) => (
                   <UserCard
                     key={follower._id}
                     user={follower}
@@ -75,8 +77,8 @@ const Follows = async ({ searchParams }: SearchParamsProps) => {
           </TabsContent>
           <TabsContent value="following" className="flex w-full flex-col gap-6">
             <section className="mt-12 flex flex-wrap gap-4">
-              {followingResult.following.length > 0 ? (
-                followingResult.following.map((follow: UserCardType) => (
+              {followingResult.follows.length > 0 ? (
+                followingResult.follows.map((follow: UserCardType) => (
                   <UserCard
                     key={follow._id}
                     user={follow}
