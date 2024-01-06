@@ -1,51 +1,54 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Badge } from "../ui/badge";
-import RenderTag from "../shared/RenderTag";
-import { getTopTagsForUser } from "@/lib/actions/tag.action";
+import { getUserLabel } from "@/lib/utils";
+import FollowButton from "../shared/FollowButton";
+import { UserCardType } from "@/types";
+import { IUser } from "@/models/user.model";
 
 interface UserCardProps {
-  user: {
-    _id: string;
-    clerkId: string;
-    picture: string;
-    salutation: string;
-    firstName: string;
-    surname: string;
-    specialty: string;
-    trust: string;
-  };
+  user: UserCardType;
+  currentUser: IUser;
 }
 
-const UserCard = async ({ user }: UserCardProps) => {
-  const topTags = await getTopTagsForUser({ userId: user._id });
+const UserCard = async ({ user, currentUser }: UserCardProps) => {
+  // const topTags = await getTopTagsForUser({ userId: user._id });
+
+  const userAlreadyFollows = user.followers.includes(currentUser._id);
 
   return (
-    <Link
-      href={`/profile/${user.clerkId}`}
-      className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]"
-    >
+    <div className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]">
       <article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-8">
-        <Image
-          src={user.picture}
-          alt="user profile picture"
-          width={100}
-          height={100}
-          className="rounded-full"
-        />
+        <Link href={`/profile/${user.clerkId}`} className="flex w-full flex-col items-center justify-center">
+          <Image
+            src={user.picture}
+            alt="user profile picture"
+            width={100}
+            height={100}
+            className="rounded-full"
+          />
 
-        <div className="mt-4 text-center">
-          <h3 className="h3-bold text-dark200_light900 line-clamp-1">
-            {user.salutation || "Dr."} {user.firstName || "Placeholder"}{" "}
-            {user.surname || "Name"}
-          </h3>
-          <p className="body-regular text-dark500_light500 mt-2">
-            {user.specialty || "Specialty"} at {user.trust || "Trust"}
-          </p>
-        </div>
+          <div className="mt-4 text-center">
+            <h3 className="h3-bold text-dark200_light900 line-clamp-1">
+              {user.fullName}{" "}
+            </h3>
+            <p className="body-regular text-dark500_light500 mt-2 line-clamp-2">
+              {getUserLabel(user)}
+            </p>
+          </div>
+        </Link>
 
         <div className="mt-5">
+          {currentUser && (
+            <FollowButton
+              followingUserId={currentUser.clerkId}
+              followedUserId={user.clerkId}
+              userAlreadyFollows={userAlreadyFollows}
+            />
+          )}
+        </div>
+
+        {/* <div className="mt-5">
           {topTags.length > 0 ? (
             <div className="flex items-center gap-2">
               {topTags.map((tag) => (
@@ -55,9 +58,9 @@ const UserCard = async ({ user }: UserCardProps) => {
           ) : (
             <Badge>No tags yet</Badge>
           )}
-        </div>
+        </div> */}
       </article>
-    </Link>
+    </div>
   );
 };
 

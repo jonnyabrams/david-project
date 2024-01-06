@@ -14,6 +14,16 @@ export interface Comment {
   postId: number;
 }
 
+export interface UserCardType {
+  _id: string;
+  clerkId: string;
+  picture: string;
+  fullName: string;
+  specialty: string;
+  trust: string;
+  followers: string[];
+}
+
 export interface Job {
   id?: string;
   employer_name?: string;

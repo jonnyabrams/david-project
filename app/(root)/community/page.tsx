@@ -1,14 +1,18 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs";
 
 import UserCard from "@/components/cards/UserCard";
 import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { UserFilters } from "@/constants/filters";
-import { getAllUsers } from "@/lib/actions/user.action";
+import { getAllUsers, getUserById } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
+  const { userId } = auth();
+  const currentUser = await getUserById({ userId });
+
   const result = await getAllUsers({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
@@ -36,7 +40,15 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
 
       <section className="mt-12 flex flex-wrap gap-4">
         {result.users.length > 0 ? (
-          result.users.map((user) => <UserCard key={user._id} user={user} />)
+          result.users
+            .filter((user) => !(user.clerkId === currentUser.clerkId))
+            .map((user) => (
+              <UserCard
+                key={user._id}
+                user={user}
+                currentUser={currentUser}
+              />
+            ))
         ) : (
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
             <p>No users found</p>

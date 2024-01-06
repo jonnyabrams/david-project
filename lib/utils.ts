@@ -8,7 +8,12 @@ import {
   subspecialtyMatcher,
 } from "@/constants/specialties";
 import { IUser } from "@/models/user.model";
-import { RemoveUrlQueryParams, SelectOption, UrlQueryParams } from "@/types";
+import {
+  RemoveUrlQueryParams,
+  SelectOption,
+  UrlQueryParams,
+  UserCard,
+} from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,7 +23,7 @@ export const getFullName = (user: IUser) => {
   return `${user.salutation} ${user.firstName} ${user.surname}`;
 };
 
-export const getUserLabel = (user: IUser) => {
+export const getUserLabel = (user: IUser | UserCard) => {
   return `${user.specialty} at ${user.trust}`;
 };
 
