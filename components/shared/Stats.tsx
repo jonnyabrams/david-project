@@ -1,4 +1,5 @@
 import { formatLargeNumber } from "@/lib/utils";
+import Link from "next/link";
 
 interface StatsProps {
   totalPosts: number;
@@ -31,18 +32,18 @@ const Stats = ({
       </div>
 
       <div className="light-border background-light900_dark300 flex flex-wrap items-center justify-evenly gap-4 rounded-md border p-6 shadow-light-300 dark:shadow-dark-200">
-        <div>
-          <p className="paragraph-semibold text-dark200_light900">
+        <Link href="/follows?type=followers">
+          <p className="paragraph-semibold text-primary-500">
             {formatLargeNumber(totalFollowers)}
           </p>
           <p className="body-medium text-dark400_light700">Followers</p>
-        </div>
-        <div>
-          <p className="paragraph-semibold text-dark200_light900">
+        </Link>
+        <Link href="/follows?type=following">
+          <p className="paragraph-semibold text-primary-500">
             {formatLargeNumber(totalFollowing)}
           </p>
           <p className="body-medium text-dark400_light700">Following</p>
-        </div>
+        </Link>
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ const Follows = async ({ searchParams }: SearchParamsProps) => {
       </div>
 
       <div className="mt-10 flex gap-10">
-        <Tabs defaultValue="followers" className="flex-1">
+        <Tabs defaultValue={searchParams.type} className="flex-1">
           <TabsList className="background-light800_dark400 min-h-[42px] p-1">
             <TabsTrigger value="followers" className="tab">
               Followers
