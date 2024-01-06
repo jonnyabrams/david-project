@@ -12,13 +12,13 @@ const Onboarding = async () => {
   if (dbUser?.isOnboarded) redirect("/");
 
   return (
-    <div>
+    <div className="max-xs:mx-10">
       <h1 className="my-4">
         Complete your profile to continue using Share Our Best...
       </h1>
 
       <section className="my-4">
-        <ProfileForm clerkId={userId} user={JSON.stringify(dbUser)} />
+        <ProfileForm clerkId={userId} user={JSON.stringify(dbUser)} isOnboarding />
       </section>
     </div>
   );

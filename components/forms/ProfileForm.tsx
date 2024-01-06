@@ -35,9 +35,14 @@ import { UploadButton } from "@/lib/uploadthing";
 interface ProfileFormProps {
   clerkId: string;
   user: string;
+  isOnboarding: boolean;
 }
 
-const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
+const ProfileForm = ({
+  clerkId,
+  user,
+  isOnboarding = false,
+}: ProfileFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSubspecialties, setShowSubspecialties] = useState(false);
   const [subspecialties, setSubspecialties] = useState<SelectOption[]>([]);
@@ -46,6 +51,10 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
   const pathname = usePathname();
 
   const parsedUser = JSON.parse(user);
+
+  const inputClasses = isOnboarding
+    ? "no-focus"
+    : "no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border";
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
@@ -168,6 +177,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                   name="salutation"
                   options={salutations}
                   field={field}
+                  isOnboarding={isOnboarding}
                 />
               </FormControl>
               <FormMessage />
@@ -183,10 +193,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                 First name <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  {...field}
-                />
+                <Input className={inputClasses} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -201,10 +208,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                 Surname <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  {...field}
-                />
+                <Input className={inputClasses} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -217,7 +221,12 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
             <FormItem className="space-y-3.5">
               <FormLabel>Trust</FormLabel>
               <FormControl>
-                <SelectInput name="trust" options={trusts} field={field} />
+                <SelectInput
+                  name="trust"
+                  options={trusts}
+                  field={field}
+                  isOnboarding={isOnboarding}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -234,6 +243,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                   name="specialty"
                   options={specialties}
                   field={field}
+                  isOnboarding={isOnboarding}
                 />
               </FormControl>
               <FormMessage />
@@ -252,6 +262,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                     name="subspecialty"
                     options={subspecialties}
                     field={field}
+                    isOnboarding={isOnboarding}
                   />
                 </FormControl>
                 <FormMessage />
@@ -266,11 +277,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
             <FormItem className="space-y-3.5">
               <FormLabel>Website</FormLabel>
               <FormControl>
-                <Input
-                  type="url"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  {...field}
-                />
+                <Input type="url" className={inputClasses} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -283,10 +290,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
             <FormItem className="space-y-3.5">
               <FormLabel>Location</FormLabel>
               <FormControl>
-                <Input
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
-                  {...field}
-                />
+                <Input className={inputClasses} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -302,7 +306,7 @@ const ProfileForm = ({ clerkId, user }: ProfileFormProps) => {
                 <Textarea
                   rows={7}
                   placeholder="Tell us about yourself..."
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
+                  className={inputClasses}
                   {...field}
                 />
               </FormControl>
