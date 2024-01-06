@@ -12,7 +12,7 @@ import {
   RemoveUrlQueryParams,
   SelectOption,
   UrlQueryParams,
-  UserCard,
+  UserCardType,
 } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,7 +23,7 @@ export const getFullName = (user: IUser) => {
   return `${user.salutation} ${user.firstName} ${user.surname}`;
 };
 
-export const getUserLabel = (user: IUser | UserCard) => {
+export const getUserLabel = (user: IUser | UserCardType) => {
   return `${user.specialty} at ${user.trust}`;
 };
 
