@@ -31,11 +31,6 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Saved Posts",
   },
   {
-    imgUrl: "/assets/icons/suitcase.svg",
-    route: "/jobs",
-    label: "Find Jobs",
-  },
-  {
     imgUrl: "/assets/icons/tag.svg",
     route: "/tags",
     label: "Tags",
