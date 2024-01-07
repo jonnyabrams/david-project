@@ -42,7 +42,7 @@ const Intro = () => {
           alt="banner image"
           width={260}
           height={260}
-          className="rounded-md"
+          className="rounded-md max-sm:hidden"
         />
       </div>
       {/* <div className="float-right flex items-center gap-4">
