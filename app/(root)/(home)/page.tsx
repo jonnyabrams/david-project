@@ -16,6 +16,7 @@ import Pagination from "@/components/shared/Pagination";
 import GlobalSearch from "@/components/shared/search/GlobalSearch";
 import { getPopularTags } from "@/lib/actions/tag.action";
 import RenderTag from "@/components/shared/RenderTag";
+import Intro from "@/components/home/Intro";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getPosts({
@@ -27,7 +28,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
   const popularTags = await getPopularTags();
 
   const { userId } = auth();
-  if (!userId) return null;
+  if (!userId) return <Intro />;
 
   const dbUser = await getUserById({ userId });
   if (!dbUser?.isOnboarded) redirect("/onboarding");
