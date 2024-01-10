@@ -42,6 +42,7 @@ const PostsByTag = async ({ params, searchParams }: URLProps) => {
               comments={post.comments}
               createdAt={post.createdAt}
               clerkId={post.clerkId}
+              content={post.content}
             />
           ))
         ) : (

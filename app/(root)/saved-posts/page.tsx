@@ -55,6 +55,7 @@ const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
               comments={post.comments}
               createdAt={post.createdAt}
               clerkId={post.clerkId}
+              content={post.content}
             />
           ))
         ) : (

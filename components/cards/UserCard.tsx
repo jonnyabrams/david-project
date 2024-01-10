@@ -19,7 +19,10 @@ const UserCard = async ({ user, currentUser }: UserCardProps) => {
   return (
     <div className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]">
       <article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-8">
-        <Link href={`/profile/${user.clerkId}`} className="flex w-full flex-col items-center justify-center">
+        <Link
+          href={`/profile/${user.clerkId}`}
+          className="flex w-full flex-col items-center justify-center"
+        >
           <Image
             src={user.picture}
             alt="user profile picture"
@@ -29,7 +32,7 @@ const UserCard = async ({ user, currentUser }: UserCardProps) => {
           />
 
           <div className="mt-4 text-center">
-            <h3 className="h3-bold text-dark200_light900 line-clamp-1">
+            <h3 className="text-dark200_light900 line-clamp-1 font-bold">
               {user.fullName}{" "}
             </h3>
             <p className="body-regular text-dark500_light500 mt-2 line-clamp-2">

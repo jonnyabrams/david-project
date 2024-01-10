@@ -28,6 +28,7 @@ const PostsTab = async ({ searchProps, userId, clerkId }: PostsTabProps) => {
           comments={post.comments}
           createdAt={post.createdAt}
           clerkId={clerkId}
+          content={post.content}
         />
       ))}
 

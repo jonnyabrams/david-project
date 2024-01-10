@@ -74,6 +74,10 @@ export const getJoinedDate = (date: Date): string => {
   return joinedDate;
 };
 
+export const removeHtmlTags = (input: string) => {
+  return input.replace(/<\/?[^>]+(>|$)/g, "");
+};
+
 export const getSubspecialties = (
   specialty: string | undefined,
   setShowSubspecialties: Dispatch<SetStateAction<boolean>>,

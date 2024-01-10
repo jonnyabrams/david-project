@@ -38,6 +38,15 @@ export interface Job {
   job_country?: string;
 }
 
+export interface Author {
+  _id: string;
+  clerkId: string;
+  salutation: string;
+  firstName: string;
+  surname: string;
+  picture: string;
+};
+
 export interface SelectOption {
   value: string;
   name: string;
