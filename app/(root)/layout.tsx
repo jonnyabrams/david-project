@@ -1,10 +1,28 @@
 import React from "react";
+import { Knock } from "@knocklabs/node";
 
 import Navbar from "@/components/shared/navbar/Navbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSidebar";
+import { currentUser } from "@clerk/nextjs";
+import { getUserById } from "@/lib/actions/user.action";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+  const clerkUser = await currentUser();
+
+  const dbUser = clerkUser ? await getUserById({ userId: clerkUser.id }) : null;
+
+  const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
+  const knockUser = dbUser
+    ? await knockClient.users.identify(dbUser._id, {
+        name: dbUser.fullName,
+        firstName: dbUser.firstName,
+        email: dbUser.email,
+      })
+    : null;
+
+  console.log(knockUser);
+
   return (
     <main className="background-light850_dark100 relative max-xs:min-w-[29rem]">
       <Navbar />

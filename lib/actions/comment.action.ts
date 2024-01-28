@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Knock } from "@knocklabs/node";
 
 import Comment from "@/models/comment.model";
 import { connectToDatabase } from "../db";
@@ -13,6 +14,8 @@ import {
 import Post from "@/models/post.model";
 import Interaction from "@/models/interaction.model";
 import User from "@/models/user.model";
+
+const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
 
 export const createComment = async (params: CreateCommentParams) => {
   try {
@@ -37,11 +40,21 @@ export const createComment = async (params: CreateCommentParams) => {
       action: "create_comment",
       post,
       comment: newComment._id,
-      tags: postObject.tags
-    })
+      tags: postObject.tags,
+    });
 
     await User.findByIdAndUpdate(author, {
       $inc: { reputation: 10 },
+    });
+
+    await knockClient.notify("new-comment", {
+      actor: author,
+      recipients: [postObject.author._id],
+      data: {
+        post: {
+          title: postObject.title,
+        },
+      },
     });
 
     revalidatePath(path);
