@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { FilterQuery } from "mongoose";
+import { Knock } from "@knocklabs/node";
 
 import { connectToDatabase } from "../db";
 import Post from "@/models/post.model";
@@ -17,6 +18,8 @@ import {
   GetPostsParams,
   PostLikeParams,
 } from "./shared.types";
+
+const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
 
 export const getPosts = async (params: GetPostsParams) => {
   try {
@@ -192,6 +195,18 @@ export const toggleLikePost = async (params: PostLikeParams) => {
     await User.findByIdAndUpdate(post.author, {
       $inc: { reputation: userHasAlreadyLiked ? -10 : 10 },
     });
+
+    if (!userHasAlreadyLiked) {
+      await knockClient.notify("new-like", {
+        actor: userId,
+        recipients: [post.author._id],
+        data: {
+          post: {
+            title: post.title,
+          },
+        },
+      });
+    }
 
     revalidatePath(path);
   } catch (error) {
