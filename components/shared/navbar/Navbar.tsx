@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import NotificationMenu from "./NotificationMenu";
 
 const Navbar = async () => {
   const user = await currentUser();
@@ -39,6 +40,11 @@ const Navbar = async () => {
 
       <div className="flex-between gap-5">
         <Theme />
+        {dbUser && (
+          <div className="mr-2">
+            <NotificationMenu userId={JSON.parse(JSON.stringify(dbUser._id))} />
+          </div>
+        )}
         <SignedIn>
           {/* <UserButton
             afterSignOutUrl="/"
