@@ -71,15 +71,14 @@ const Post = async ({ params, searchParams }: PostProps) => {
         <span className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {result.title}
         </span>
+      </div>
 
-        <SignedIn>
+      <div className="mb-8 mt-5 flex flex-wrap gap-4">
+      <SignedIn>
           {showActionButtons && (
             <EditDeleteAction type="Post" itemId={JSON.stringify(result._id)} />
           )}
         </SignedIn>
-      </div>
-
-      <div className="mb-8 mt-5 flex flex-wrap gap-4">
         <Metric
           imgUrl="/assets/icons/clock.svg"
           alt="clock icon"
