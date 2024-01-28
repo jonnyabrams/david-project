@@ -79,7 +79,7 @@ const Likes = ({
               fill="#9898ee"
               size={20}
               onClick={handleLike}
-              className="cursor-pointer text-[#9898ee]"
+              className="cursor-pointer text-[#000] dark:text-[#9898ee]"
             />
           ) : (
             <ThumbsUp
