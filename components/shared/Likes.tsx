@@ -10,6 +10,7 @@ import { toggleLikeComment } from "@/lib/actions/comment.action";
 import { toggleSavePost } from "@/lib/actions/user.action";
 import { useEffect } from "react";
 import { viewPost } from "@/lib/actions/interaction.action";
+import { ThumbsUp } from "lucide-react";
 
 interface LikesProps {
   type: string;
@@ -73,18 +74,32 @@ const Likes = ({
     <div className="flex gap-5">
       <div className="flex-center gap-2.5">
         <div className="flex-center gap-1.5">
-          <Image
+          {userHasAlreadyLiked ? (
+            <ThumbsUp
+              fill="#9898ee"
+              size={20}
+              onClick={handleLike}
+              className="cursor-pointer"
+            />
+          ) : (
+            <ThumbsUp
+              size={20}
+              onClick={handleLike}
+              className="cursor-pointer"
+            />
+          )}
+          {/* <Image
             src={
               userHasAlreadyLiked
-                ? "/assets/icons/upvoted.svg"
-                : "/assets/icons/upvote.svg"
+                ? "/assets/icons/liked.svg"
+                : "/assets/icons/like.svg"
             }
             width={18}
             height={18}
             alt="like"
             className="cursor-pointer"
             onClick={handleLike}
-          />
+          /> */}
           <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
             <p className="subtle-medium text-dark400_light900">
               {formatLargeNumber(numberOfLikes)}
