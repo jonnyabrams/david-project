@@ -214,7 +214,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           control={form.control}
           name="picture"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
+            <FormItem className="flex items-center">
               <FormLabel>
                 {field.value ? (
                   <Image
@@ -226,16 +226,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
                     className="object-cover"
                   />
                 ) : (
-                  // TODO: replace default image
-                  <Image
-                    src={
-                      parsedPostDetails?.picture || "/assets/icons/camera.svg"
-                    }
-                    alt="profile picture"
-                    width={140}
-                    height={140}
-                    className="text-dark300_light900 object-cover"
-                  />
+                  <span className="text-dark300_light900">Upload an image:</span>
                 )}
               </FormLabel>
               <FormControl className="flex-1">

@@ -20,7 +20,7 @@ const EditPost = async ({ params }: ParamsProps) => {
       <div className="mt-9">
         <PostForm
           type="edit"
-          dbUserId={dbUser._id}
+          dbUserId={JSON.stringify(dbUser._id)}
           postDetails={JSON.stringify(post)}
         />
       </div>
