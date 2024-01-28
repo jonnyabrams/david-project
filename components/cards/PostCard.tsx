@@ -25,7 +25,7 @@ interface PostCardProps {
     trust: string;
     followers: string[];
   };
-  upvotes: string[];
+  likes: string[];
   views: number;
   comments: Array<object>;
   createdAt: Date;
@@ -38,7 +38,7 @@ const PostCard = async ({
   title,
   tags,
   author,
-  upvotes,
+  likes,
   views,
   comments,
   createdAt,
@@ -92,9 +92,9 @@ const PostCard = async ({
 
         <Metric
           imgUrl="/assets/icons/like.svg"
-          alt="upvotes"
-          value={formatLargeNumber(upvotes.length)}
-          title={` vote${upvotes.length === 1 ? "" : "s"}`}
+          alt="likes"
+          value={formatLargeNumber(likes.length)}
+          title={` like${likes.length === 1 ? "" : "s"}`}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric

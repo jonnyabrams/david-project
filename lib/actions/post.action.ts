@@ -15,7 +15,7 @@ import {
   EditPostParams,
   GetPostByIdParams,
   GetPostsParams,
-  PostVoteParams,
+  PostLikeParams,
 } from "./shared.types";
 
 export const getPosts = async (params: GetPostsParams) => {
@@ -46,8 +46,8 @@ export const getPosts = async (params: GetPostsParams) => {
       case "most_viewed":
         sortOptions = { views: -1 };
         break;
-      case "most_upvoted":
-        sortOptions = { upvoteCount: -1 };
+      case "most_likes":
+        sortOptions = { likeCount: -1 };
         break;
       case "most_comments":
         sortOptions = { commentCount: -1 };
@@ -158,27 +158,21 @@ export const getPostById = async (params: GetPostByIdParams) => {
   }
 };
 
-export const upvotePost = async (params: PostVoteParams) => {
+export const toggleLikePost = async (params: PostLikeParams) => {
   try {
     connectToDatabase();
 
-    const { postId, userId, userHasUpvoted, userHasDownvoted, path } = params;
+    const { postId, userId, userHasAlreadyLiked, path } = params;
 
     let updateQuery = {};
 
-    if (userHasUpvoted) {
-      updateQuery = { $pull: { upvotes: userId }, $inc: { upvoteCount: -1 } };
-    } else if (userHasDownvoted) {
-      updateQuery = {
-        $pull: { downvotes: userId },
-        $push: { upvotes: userId },
-        $inc: { downvoteCount: -1, upvoteCount: 1 },
-      };
+    if (userHasAlreadyLiked) {
+      updateQuery = { $pull: { likes: userId }, $inc: { likeCount: -1 } };
     } else {
       updateQuery = {
-        $addToSet: { upvotes: userId },
-        $inc: { upvoteCount: 1 },
-      };
+            $addToSet: { likes: userId },
+            $inc: { likeCount: 1 },
+          };
     }
 
     const post = await Post.findByIdAndUpdate(postId, updateQuery, {
@@ -189,60 +183,14 @@ export const upvotePost = async (params: PostVoteParams) => {
       throw new Error("Post not found");
     }
 
-    // +1 reputation for giving an upvote
+    // +1 reputation for liking a post
     await User.findByIdAndUpdate(userId, {
-      $inc: { reputation: userHasUpvoted ? -1 : 1 },
+      $inc: { reputation: userHasAlreadyLiked ? -1 : 1 },
     });
 
-    // +10 reputation for receiving an upvote
+    // +10 reputation for receiving a like
     await User.findByIdAndUpdate(post.author, {
-      $inc: { reputation: userHasUpvoted ? -10 : 10 },
-    });
-
-    revalidatePath(path);
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const downvotePost = async (params: PostVoteParams) => {
-  try {
-    connectToDatabase();
-
-    const { postId, userId, userHasUpvoted, userHasDownvoted, path } = params;
-
-    let updateQuery = {};
-
-    if (userHasDownvoted) {
-      updateQuery = {
-        $pull: { downvotes: userId },
-        $inc: { downvoteCount: -1 },
-      };
-    } else if (userHasUpvoted) {
-      updateQuery = {
-        $pull: { upvotes: userId },
-        $push: { downvotes: userId },
-        $inc: { upvoteCount: -1, downvoteCount: 1 },
-      };
-    } else {
-      updateQuery = {
-        $addToSet: { downvotes: userId },
-        $inc: { downvoteCount: 1 },
-      };
-    }
-
-    const post = await Post.findByIdAndUpdate(postId, updateQuery, {
-      new: true,
-    });
-
-    if (!post) {
-      throw new Error("Post not found");
-    }
-
-    // -10 reputation for receiving a downvote
-    await User.findByIdAndUpdate(post.author, {
-      $inc: { reputation: userHasDownvoted ? 10 : -10 },
+      $inc: { reputation: userHasAlreadyLiked ? -10 : 10 },
     });
 
     revalidatePath(path);
@@ -308,7 +256,7 @@ export const getTopPosts = async () => {
     connectToDatabase();
 
     const topPosts = await Post.find({})
-      .sort({ views: -1, upvotes: -1 })
+      .sort({ views: -1, likes: -1 })
       .limit(5);
 
     return topPosts;

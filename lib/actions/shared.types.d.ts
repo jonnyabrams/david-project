@@ -83,19 +83,17 @@ export interface GetCommentsParams {
   limit?: number;
 }
 
-export interface PostVoteParams {
+export interface PostLikeParams {
   postId: string;
   userId: string;
-  userHasUpvoted: boolean;
-  userHasDownvoted: boolean;
+  userHasAlreadyLiked: boolean;
   path: string;
 }
 
-export interface CommentVoteParams {
+export interface CommentLikeParams {
   commentId: string;
   userId: string;
-  userHasUpvoted: boolean;
-  userHasDownvoted: boolean;
+  userHasAlreadyLiked: boolean;
   path: string;
 }
 

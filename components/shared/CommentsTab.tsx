@@ -27,7 +27,7 @@ const CommentsTab = async ({
           _id={comment._id}
           post={comment.post}
           author={comment.author}
-          numberOfUpvotes={comment.upvotes.length}
+          numberOfLikes={comment.likes.length}
           createdAt={comment.createdAt}
         />
       ))}

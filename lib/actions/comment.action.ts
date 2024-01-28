@@ -6,7 +6,7 @@ import { Knock } from "@knocklabs/node";
 import Comment from "@/models/comment.model";
 import { connectToDatabase } from "../db";
 import {
-  CommentVoteParams,
+  CommentLikeParams,
   CreateCommentParams,
   DeleteCommentParams,
   GetCommentsParams,
@@ -81,8 +81,8 @@ export const getComments = async (params: GetCommentsParams) => {
       case "oldest":
         sortOptions = { createdAt: 1 };
         break;
-      case "most_upvoted":
-        sortOptions = { upvotesCount: -1 };
+      case "most_likes":
+        sortOptions = { likesCount: -1 };
         break;
       default:
         break;
@@ -107,27 +107,20 @@ export const getComments = async (params: GetCommentsParams) => {
   }
 };
 
-export const upvoteComment = async (params: CommentVoteParams) => {
+export const toggleLikeComment = async (params: CommentLikeParams) => {
   try {
     connectToDatabase();
 
-    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } =
-      params;
+    const { commentId, userId, userHasAlreadyLiked, path } = params;
 
     let updateQuery = {};
 
-    if (userHasUpvoted) {
-      updateQuery = { $pull: { upvotes: userId }, $inc: { upvoteCount: -1 } };
-    } else if (userHasDownvoted) {
-      updateQuery = {
-        $pull: { downvotes: userId },
-        $push: { upvotes: userId },
-        $inc: { downvoteCount: -1, upvoteCount: 1 },
-      };
+    if (userHasAlreadyLiked) {
+      updateQuery = { $pull: { likes: userId }, $inc: { likeCount: -1 } };
     } else {
       updateQuery = {
-        $addToSet: { upvotes: userId },
-        $inc: { upvoteCount: 1 },
+        $addToSet: { likes: userId },
+        $inc: { likeCount: 1 },
       };
     }
 
@@ -139,54 +132,14 @@ export const upvoteComment = async (params: CommentVoteParams) => {
       throw new Error("Comment not found");
     }
 
-    // +2 reputation for upvoting a comment
+    // +2 reputation for liking a comment
     await User.findByIdAndUpdate(userId, {
-      $inc: { reputation: userHasUpvoted ? -2 : 2 },
+      $inc: { reputation: userHasAlreadyLiked ? -2 : 2 },
     });
 
-    // +10 reputation for receiving an upvote
+    // +10 reputation for receiving a like on a comment
     await User.findByIdAndUpdate(comment.author, {
-      $inc: { reputation: userHasUpvoted ? -10 : 10 },
-    });
-
-    revalidatePath(path);
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const downvoteComment = async (params: CommentVoteParams) => {
-  try {
-    connectToDatabase();
-
-    const { commentId, userId, userHasUpvoted, userHasDownvoted, path } =
-      params;
-
-    let updateQuery = {};
-
-    if (userHasDownvoted) {
-      updateQuery = { $pull: { downvotes: userId } };
-    } else if (userHasUpvoted) {
-      updateQuery = {
-        $pull: { upvotes: userId },
-        $push: { downvotes: userId },
-      };
-    } else {
-      updateQuery = { $addToSet: { downvotes: userId } };
-    }
-
-    const comment = await Comment.findByIdAndUpdate(commentId, updateQuery, {
-      new: true,
-    });
-
-    if (!comment) {
-      throw new Error("Comment not found");
-    }
-
-    // -10 reputation for receiving a downvote
-    await User.findByIdAndUpdate(comment.author, {
-      $inc: { reputation: userHasDownvoted ? 10 : -10 },
+      $inc: { reputation: userHasAlreadyLiked ? -10 : 10 },
     });
 
     revalidatePath(path);

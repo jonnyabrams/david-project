@@ -19,7 +19,7 @@ interface CommentCardProps {
     name: string;
     picture: string;
   };
-  numberOfUpvotes: number;
+  numberOfLikes: number;
   createdAt: Date;
 }
 const CommentCard = ({
@@ -27,7 +27,7 @@ const CommentCard = ({
   _id,
   post,
   author,
-  numberOfUpvotes,
+  numberOfLikes,
   createdAt
 }: CommentCardProps) => {
   const showActionButtons = clerkId && clerkId === author.clerkId;
@@ -66,8 +66,8 @@ const CommentCard = ({
             <Metric
               imgUrl="/assets/icons/like.svg"
               alt="like icon"
-              value={formatLargeNumber(numberOfUpvotes)}
-              title=" Votes"
+              value={formatLargeNumber(numberOfLikes)}
+              title=" Likes"
               textStyles="small-medium text-dark400_light800"
             />
           </div>

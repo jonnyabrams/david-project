@@ -293,8 +293,8 @@ export const getSavedPosts = async (params: GetSavedPostsParams) => {
       case "oldest":
         sortOptions = { createdAt: 1 };
         break;
-      case "most_upvoted":
-        sortOptions = { upvotes: -1 };
+      case "most_likes":
+        sortOptions = { likes: -1 };
         break;
       case "most_viewed":
         sortOptions = { views: -1 };
@@ -391,7 +391,7 @@ export const getUserPosts = async (params: GetUserStatsParams) => {
     const totalPosts = await Post.countDocuments({ author: userId });
 
     const userPosts = await Post.find({ author: userId })
-      .sort({ createdAt: -1, views: -1, upvotes: -1 })
+      .sort({ createdAt: -1, views: -1, likes: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate("tags", "_id name")
@@ -417,7 +417,7 @@ export const getUserComments = async (params: GetUserStatsParams) => {
     const totalComments = await Comment.countDocuments({ author: userId });
 
     const userComments = await Comment.find({ author: userId })
-      .sort({ upvotes: -1 })
+      .sort({ likes: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate("post", "_id title")

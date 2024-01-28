@@ -1,5 +1,5 @@
 export const CommentFilters = [
-  { name: "Most Upvoted", value: "most_upvotes" },
+  { name: "Most Likes", value: "most_likes" },
   { name: "Newest", value: "newest" },
   { name: "Oldest", value: "oldest" },
 ];
@@ -14,7 +14,7 @@ export const UserFilters = [
 export const PostFilters = [
   { name: "Newest", value: "newest" },
   { name: "Oldest", value: "oldest" },
-  { name: "Most Upvoted", value: "most_upvoted" },
+  { name: "Most Likes", value: "most_likes" },
   { name: "Most Viewed", value: "most_viewed" },
   { name: "Most Comments", value: "most_comments" },
 ];
@@ -28,7 +28,7 @@ export const TagFilters = [
 
 export const HomePageFilters = [
   { name: "Newest", value: "newest" },
-  { name: "Most Upvoted", value: "most_upvoted" },
+  { name: "Most Likes", value: "most_likes" },
   { name: "Most Comments", value: "most_comments" },
   { name: "Most Viewed", value: "most_viewed" },
   { name: "Recommended", value: "recommended" },

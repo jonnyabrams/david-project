@@ -11,7 +11,7 @@ import RenderTag from "@/components/shared/RenderTag";
 import CommentForm from "@/components/forms/CommentForm";
 import { getUserById } from "@/lib/actions/user.action";
 import Comments from "@/components/shared/Comments";
-import Votes from "@/components/shared/Votes";
+import Likes from "@/components/shared/Likes";
 import EditDeleteAction from "@/components/shared/EditDeleteAction";
 
 interface PostProps {
@@ -21,6 +21,11 @@ interface PostProps {
 
 const Post = async ({ params, searchParams }: PostProps) => {
   const result = await getPostById({ postId: params.id });
+
+  if (!result) {
+    return;
+  }
+
   const { userId: clerkId } = auth();
 
   let dbUser;
@@ -52,14 +57,12 @@ const Post = async ({ params, searchParams }: PostProps) => {
           </Link>
 
           <div className="flex justify-end">
-            <Votes
+            <Likes
               type="Post"
               itemId={JSON.stringify(result._id)}
               userId={JSON.stringify(dbUser._id)}
-              numberOfUpvotes={result.upvotes.length}
-              userHasUpvoted={result.upvotes.includes(dbUser._id)}
-              numberOfDownvotes={result.downvotes.length}
-              userHasDownvoted={result.downvotes.includes(dbUser._id)}
+              numberOfLikes={result.likes.length}
+              userHasAlreadyLiked={result.likes.includes(dbUser._id)}
               userHasSaved={dbUser?.savedPosts.includes(result._id)}
             />
           </div>

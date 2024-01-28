@@ -6,14 +6,12 @@ export interface IPost extends Document {
   content: string;
   tags: Schema.Types.ObjectId[];
   views: number;
-  upvotes: Schema.Types.ObjectId[];
-  downvotes: Schema.Types.ObjectId[];
+  likes: Schema.Types.ObjectId[];
   author: IUser | Schema.Types.ObjectId;
   comments: Schema.Types.ObjectId[];
   picture: string;
   pdf: { name: string; url: string };
-  upvoteCount: number;
-  downvoteCount: number;
+  likeCount: number;
   commentCount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -25,8 +23,7 @@ const PostSchema = new Schema(
     content: { type: String, required: true },
     tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
     views: { type: Number, default: 0 },
-    upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     author: { type: Schema.Types.ObjectId, ref: "User" },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     picture: { type: String },
@@ -34,8 +31,7 @@ const PostSchema = new Schema(
       name: { type: String },
       url: { type: String },
     },
-    upvoteCount: { type: Number, default: 0 },
-    downvoteCount: { type: Number, default: 0 },
+    likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
   },
   { timestamps: true }
