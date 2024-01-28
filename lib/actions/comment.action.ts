@@ -142,6 +142,20 @@ export const toggleLikeComment = async (params: CommentLikeParams) => {
       $inc: { reputation: userHasAlreadyLiked ? -10 : 10 },
     });
 
+    const post = await Post.findById(comment.post)
+
+    if (!userHasAlreadyLiked) {
+      await knockClient.notify("new-comment-like", {
+        actor: userId,
+        recipients: [comment.author._id],
+        data: {
+          post: {
+            title: post.title,
+          },
+        },
+      });
+    }
+
     revalidatePath(path);
   } catch (error) {
     console.error(error);

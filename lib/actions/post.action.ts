@@ -197,7 +197,7 @@ export const toggleLikePost = async (params: PostLikeParams) => {
     });
 
     if (!userHasAlreadyLiked) {
-      await knockClient.notify("new-like", {
+      await knockClient.notify("new-post-like", {
         actor: userId,
         recipients: [post.author._id],
         data: {
