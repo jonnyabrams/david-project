@@ -85,7 +85,7 @@ const Likes = ({
             <ThumbsUp
               size={20}
               onClick={handleLike}
-              className="cursor-pointer"
+              className="text-dark200_light800 cursor-pointer"
             />
           )}
           {/* <Image
