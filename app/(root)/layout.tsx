@@ -16,7 +16,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
   // eslint-disable-next-line no-unused-vars
   const knockUser = dbUser
-    ? await knockClient.users.identify(dbUser._id, {
+    ? await knockClient.users.identify(dbUser._id.toString(), {
         name: dbUser.fullName,
         firstName: dbUser.firstName,
         email: dbUser.email,
@@ -25,7 +25,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
   // for production
   const knockToken = dbUser
-    ? await Knock.signUserToken(dbUser._id, {
+    ? await Knock.signUserToken(dbUser._id.toString(), {
         signingKey: process.env.KNOCK_SIGNING_KEY,
         expiresInSeconds: 60 * 60,
       })
