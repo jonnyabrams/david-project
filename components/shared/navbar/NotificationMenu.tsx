@@ -15,9 +15,11 @@ import { useTheme } from "@/context/ThemeProvider";
 interface NotificationMenuProps {
   userId: string;
   knockToken: string;
+  apiKey: string;
+  feedChannelId: string;
 }
 
-const NotificationMenu = ({ userId, knockToken }: NotificationMenuProps) => {
+const NotificationMenu = ({ userId, knockToken, apiKey, feedChannelId }: NotificationMenuProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const notifButtonRef = useRef(null);
@@ -30,14 +32,14 @@ const NotificationMenu = ({ userId, knockToken }: NotificationMenuProps) => {
 
   return isClient ? (
     <KnockProvider
-      apiKey={process.env.NEXT_PUBLIC_KNOCK_API_KEY!}
+      apiKey={apiKey}
       userId={userId}
       // In production, you must pass a signed userToken
       // and enable enhanced security mode in your Knock dashboard
       userToken={knockToken}
     >
       <KnockFeedProvider
-        feedId={process.env.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID!}
+        feedId={feedChannelId}
         colorMode={mode === "light" ? "light" : "dark"}
       >
         <>

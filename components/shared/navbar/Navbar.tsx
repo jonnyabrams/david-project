@@ -46,7 +46,12 @@ const Navbar = async ({ knockToken }: NavbarProps) => {
         <Theme />
         {dbUser && (
           <div className="mr-2">
-            <NotificationMenu userId={JSON.parse(JSON.stringify(dbUser._id))} knockToken={knockToken} />
+            <NotificationMenu
+              userId={JSON.parse(JSON.stringify(dbUser._id))}
+              knockToken={knockToken}
+              apiKey={process.env.KNOCK_PUBLIC_API_KEY!}
+              feedChannelId={process.env.KNOCK_FEED_CHANNEL_ID!}
+            />
           </div>
         )}
         <SignedIn>
