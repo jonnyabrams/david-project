@@ -11,6 +11,10 @@ export const viewPost = async (params: ViewPostParams) => {
 
     const { postId, userId } = params;
 
+    if (!userId) {
+      return;
+    }
+
     // update view count for post
     await Post.findByIdAndUpdate(postId, { $inc: { views: 1 } });
 
