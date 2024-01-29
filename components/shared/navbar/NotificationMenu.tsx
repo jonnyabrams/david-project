@@ -12,7 +12,12 @@ import "@knocklabs/react/dist/index.css";
 
 import { useTheme } from "@/context/ThemeProvider";
 
-const NotificationMenu = ({ userId }: { userId: string }) => {
+interface NotificationMenuProps {
+  userId: string;
+  knockToken: string;
+}
+
+const NotificationMenu = ({ userId, knockToken }: NotificationMenuProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const notifButtonRef = useRef(null);
@@ -29,7 +34,7 @@ const NotificationMenu = ({ userId }: { userId: string }) => {
       userId={userId}
       // In production, you must pass a signed userToken
       // and enable enhanced security mode in your Knock dashboard
-      // userToken={currentUser.knockUserToken}
+      userToken={knockToken}
     >
       <KnockFeedProvider
         feedId={process.env.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID!}

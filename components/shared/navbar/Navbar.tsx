@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import NotificationMenu from "./NotificationMenu";
 
-const Navbar = async () => {
+interface NavbarProps {
+  knockToken: string;
+}
+
+const Navbar = async ({ knockToken }: NavbarProps) => {
   const user = await currentUser();
 
   const dbUser = user ? await getUserById({ userId: user.id }) : null;
@@ -42,7 +46,7 @@ const Navbar = async () => {
         <Theme />
         {dbUser && (
           <div className="mr-2">
-            <NotificationMenu userId={JSON.parse(JSON.stringify(dbUser._id))} />
+            <NotificationMenu userId={JSON.parse(JSON.stringify(dbUser._id))} knockToken={knockToken} />
           </div>
         )}
         <SignedIn>
