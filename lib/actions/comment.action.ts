@@ -53,6 +53,10 @@ export const createComment = async (params: CreateCommentParams) => {
       data: {
         post: {
           title: postObject.title,
+          link:
+            process.env.NODE_ENV === "production"
+              ? `${process.env.BASE_URL}/post/${postObject._id}`
+              : `http://localhost:3000/post/${postObject._id}`,
         },
       },
     });
@@ -142,7 +146,7 @@ export const toggleLikeComment = async (params: CommentLikeParams) => {
       $inc: { reputation: userHasAlreadyLiked ? -10 : 10 },
     });
 
-    const post = await Post.findById(comment.post)
+    const post = await Post.findById(comment.post);
 
     if (!userHasAlreadyLiked) {
       await knockClient.notify("new-comment-like", {
@@ -151,6 +155,10 @@ export const toggleLikeComment = async (params: CommentLikeParams) => {
         data: {
           post: {
             title: post.title,
+            link:
+              process.env.NODE_ENV === "production"
+                ? `${process.env.BASE_URL}/post/${post._id}`
+                : `http://localhost:3000/post/${post._id}`,
           },
         },
       });

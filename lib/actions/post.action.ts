@@ -173,9 +173,9 @@ export const toggleLikePost = async (params: PostLikeParams) => {
       updateQuery = { $pull: { likes: userId }, $inc: { likeCount: -1 } };
     } else {
       updateQuery = {
-            $addToSet: { likes: userId },
-            $inc: { likeCount: 1 },
-          };
+        $addToSet: { likes: userId },
+        $inc: { likeCount: 1 },
+      };
     }
 
     const post = await Post.findByIdAndUpdate(postId, updateQuery, {
@@ -203,6 +203,10 @@ export const toggleLikePost = async (params: PostLikeParams) => {
         data: {
           post: {
             title: post.title,
+            link:
+              process.env.NODE_ENV === "production"
+                ? `${process.env.BASE_URL}/post/${post._id}`
+                : `http://localhost:3000/post/${post._id}`,
           },
         },
       });
