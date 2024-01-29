@@ -16,7 +16,7 @@ import {
 import NotificationMenu from "./NotificationMenu";
 
 interface NavbarProps {
-  knockToken: string;
+  knockToken: string | undefined;
 }
 
 const Navbar = async ({ knockToken }: NavbarProps) => {

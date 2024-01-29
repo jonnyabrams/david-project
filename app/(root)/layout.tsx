@@ -13,7 +13,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   const dbUser = clerkUser ? await getUserById({ userId: clerkUser.id }) : null;
 
   const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
-  
+
   // eslint-disable-next-line no-unused-vars
   const knockUser = dbUser
     ? await knockClient.users.identify(dbUser._id, {
@@ -24,10 +24,12 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     : null;
 
   // for production
-  const knockToken = await Knock.signUserToken(dbUser._id, {
-    signingKey: process.env.KNOCK_SIGNING_KEY,
-    expiresInSeconds: 60 * 60
-  })
+  const knockToken = dbUser
+    ? await Knock.signUserToken(dbUser._id, {
+        signingKey: process.env.KNOCK_SIGNING_KEY,
+        expiresInSeconds: 60 * 60,
+      })
+    : undefined;
 
   return (
     <main className="background-light850_dark100 relative max-xs:min-w-[29rem]">

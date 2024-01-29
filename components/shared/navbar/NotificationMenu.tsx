@@ -14,7 +14,7 @@ import { useTheme } from "@/context/ThemeProvider";
 
 interface NotificationMenuProps {
   userId: string;
-  knockToken: string;
+  knockToken: string | undefined;
   apiKey: string;
   feedChannelId: string;
 }
@@ -30,7 +30,7 @@ const NotificationMenu = ({ userId, knockToken, apiKey, feedChannelId }: Notific
     setIsClient(true);
   }, []);
 
-  return isClient ? (
+  return isClient && knockToken ? (
     <KnockProvider
       apiKey={apiKey}
       userId={userId}
