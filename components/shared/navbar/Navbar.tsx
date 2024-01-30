@@ -1,10 +1,9 @@
-import { SignOutButton, SignedIn, currentUser } from "@clerk/nextjs";
+import { SignOutButton, SignedIn } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
 import MobileNav from "./MobileNav";
 import Theme from "./Theme";
-import { getUserById } from "@/lib/actions/user.action";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,16 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import NotificationMenu from "./NotificationMenu";
+import { IUser } from "@/models/user.model";
 
 interface NavbarProps {
+  user: IUser;
   knockToken: string | undefined;
 }
 
-const Navbar = async ({ knockToken }: NavbarProps) => {
-  const user = await currentUser();
-
-  const dbUser = user ? await getUserById({ userId: user.id }) : null;
-
+const Navbar = async ({ user, knockToken }: NavbarProps) => {
   const dropdownMenuItemStyles =
     "cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400";
 
@@ -44,10 +41,10 @@ const Navbar = async ({ knockToken }: NavbarProps) => {
 
       <div className="flex-between gap-5">
         <Theme />
-        {dbUser && knockToken && (
+        {user && knockToken && (
           <div className="mr-2">
             <NotificationMenu
-              userId={dbUser._id.toString()}
+              userId={user._id.toString()}
               knockToken={knockToken}
               apiKey={process.env.KNOCK_PUBLIC_API_KEY!}
               feedChannelId={process.env.KNOCK_FEED_CHANNEL_ID!}
@@ -69,7 +66,9 @@ const Navbar = async ({ knockToken }: NavbarProps) => {
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none">
               <Image
-                src={dbUser?.picture}
+                src={
+                  user?.picture || "/assets/images/default-profile-picture.png"
+                }
                 width={36}
                 height={36}
                 className="rounded-full"
@@ -77,7 +76,7 @@ const Navbar = async ({ knockToken }: NavbarProps) => {
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="text-dark500_light700 small-regular border-none bg-light-900 focus:outline-none active:outline-none dark:bg-dark-300">
-              <DropdownMenuLabel>{dbUser?.fullName}</DropdownMenuLabel>
+              <DropdownMenuLabel>{user?.fullName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className={dropdownMenuItemStyles}>
                 <Link href={`/profile/${user?.id}`}>Your Profile</Link>
