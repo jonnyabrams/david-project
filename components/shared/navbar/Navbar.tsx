@@ -44,7 +44,7 @@ const Navbar = async ({ knockToken }: NavbarProps) => {
 
       <div className="flex-between gap-5">
         <Theme />
-        {dbUser && knockToken && (
+        {dbUser && (
           <div className="mr-2">
             <NotificationMenu
               userId={dbUser._id.toString()}
