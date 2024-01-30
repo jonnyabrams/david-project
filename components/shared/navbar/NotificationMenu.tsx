@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   KnockProvider,
   KnockFeedProvider,
@@ -10,8 +10,6 @@ import {
 // Required CSS import, unless you're overriding the styling
 import "@knocklabs/react/dist/index.css";
 
-import { useTheme } from "@/context/ThemeProvider";
-
 interface NotificationMenuProps {
   userId: string;
   knockToken: string | undefined;
@@ -19,18 +17,16 @@ interface NotificationMenuProps {
   feedChannelId: string;
 }
 
-const NotificationMenu = ({ userId, knockToken, apiKey, feedChannelId }: NotificationMenuProps) => {
+const NotificationMenu = ({
+  userId,
+  knockToken,
+  apiKey,
+  feedChannelId,
+}: NotificationMenuProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const notifButtonRef = useRef(null);
-  const { mode } = useTheme();
 
-  // make sure it's executed and hydrated on the client
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  return isClient && knockToken ? (
+  return knockToken ? (
     <KnockProvider
       apiKey={apiKey}
       userId={userId}
@@ -38,10 +34,7 @@ const NotificationMenu = ({ userId, knockToken, apiKey, feedChannelId }: Notific
       // and enable enhanced security mode in your Knock dashboard
       userToken={knockToken}
     >
-      <KnockFeedProvider
-        feedId={feedChannelId}
-        colorMode={mode === "light" ? "light" : "dark"}
-      >
+      <KnockFeedProvider feedId={feedChannelId}>
         <>
           <NotificationIconButton
             ref={notifButtonRef}
