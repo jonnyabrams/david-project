@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
@@ -10,13 +9,13 @@ import HomeFilters from "@/components/home/HomeFilters";
 import NoResults from "@/components/shared/NoResults";
 import PostCard from "@/components/cards/PostCard";
 import { getPosts } from "@/lib/actions/post.action";
-import { getUserById } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import GlobalSearch from "@/components/shared/search/GlobalSearch";
 import { getPopularTags } from "@/lib/actions/tag.action";
 import RenderTag from "@/components/shared/RenderTag";
 import Intro from "@/components/home/Intro";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getPosts({
@@ -27,11 +26,11 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
 
   const popularTags = await getPopularTags();
 
-  const { userId } = auth();
-  if (!userId) return <Intro />;
+  const currentUser = await useCurrentUser();
 
-  const dbUser = await getUserById({ userId });
-  if (!dbUser?.isOnboarded) redirect("/onboarding");
+  if (!currentUser) return <Intro />;
+
+  if (currentUser && !currentUser?.isOnboarded) redirect("/onboarding");
 
   return (
     <>

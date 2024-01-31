@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import parse from "html-react-parser";
-import { SignedIn, auth } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 import { FileText } from "lucide-react";
 
 import Metric from "@/components/shared/Metric";
@@ -9,10 +9,10 @@ import { getPostById } from "@/lib/actions/post.action";
 import { formatLargeNumber, getTimestamp } from "@/lib/utils";
 import RenderTag from "@/components/shared/RenderTag";
 import CommentForm from "@/components/forms/CommentForm";
-import { getUserById } from "@/lib/actions/user.action";
 import Comments from "@/components/shared/Comments";
 import Likes from "@/components/shared/Likes";
 import EditDeleteAction from "@/components/shared/EditDeleteAction";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface PostProps {
   params: { id: string };
@@ -22,15 +22,11 @@ interface PostProps {
 const Post = async ({ params, searchParams }: PostProps) => {
   const result = await getPostById({ postId: params.id });
 
-  const { userId: clerkId } = auth();
+  const currentUser = await useCurrentUser();
 
-  let dbUser;
-
-  if (clerkId) {
-    dbUser = await getUserById({ userId: clerkId });
-  }
-
-  const showActionButtons = clerkId && clerkId === result?.author.clerkId;
+  const showActionButtons =
+    currentUser &&
+    currentUser._id.toString() === result?.author._id.toString();
 
   return (
     <>
@@ -56,10 +52,12 @@ const Post = async ({ params, searchParams }: PostProps) => {
             <Likes
               type="Post"
               itemId={JSON.stringify(result?._id)}
-              userId={JSON.stringify(dbUser?._id)}
+              userId={JSON.stringify(currentUser?._id)}
               numberOfLikes={result?.likes.length}
-              userHasAlreadyLiked={result?.likes.includes(dbUser?._id) || false}
-              userHasSaved={dbUser?.savedPosts.includes(result?._id)}
+              userHasAlreadyLiked={
+                result?.likes.includes(currentUser?._id) || false
+              }
+              userHasSaved={currentUser?.savedPosts.includes(result?._id)}
             />
           </div>
         </div>
@@ -70,9 +68,12 @@ const Post = async ({ params, searchParams }: PostProps) => {
       </div>
 
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
-      <SignedIn>
+        <SignedIn>
           {showActionButtons && (
-            <EditDeleteAction type="Post" itemId={JSON.stringify(result?._id)} />
+            <EditDeleteAction
+              type="Post"
+              itemId={JSON.stringify(result?._id)}
+            />
           )}
         </SignedIn>
         <Metric
@@ -134,7 +135,7 @@ const Post = async ({ params, searchParams }: PostProps) => {
 
       <Comments
         postId={result?._id}
-        userId={dbUser?._id}
+        userId={currentUser?._id}
         numberOfComments={result?.comments.length}
         filter={searchParams?.filter}
         page={searchParams?.page}
@@ -143,7 +144,7 @@ const Post = async ({ params, searchParams }: PostProps) => {
       <CommentForm
         postContent={result?.content}
         postId={JSON.stringify(result?._id)}
-        authorId={JSON.stringify(dbUser?._id)}
+        authorId={JSON.stringify(currentUser?._id)}
       />
     </>
   );

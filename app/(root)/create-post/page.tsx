@@ -1,22 +1,19 @@
 import PostForm from "@/components/forms/PostForm";
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs";
 
-import { getUserById } from "@/lib/actions/user.action";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const CreatePost = async () => {
-  const { userId } = auth();
+  const currentUser = await useCurrentUser();
 
-  if (!userId) redirect("/sign-in");
-
-  const dbUser = await getUserById({ userId });
+  if (!currentUser) redirect("/sign-in");
 
   return (
     <div>
       <h1 className="h1-bold text-dark100_light900 ">Create a Post</h1>
 
       <div className="mt-9">
-        <PostForm dbUserId={JSON.stringify(dbUser._id)} />
+        <PostForm currentUserId={JSON.stringify(currentUser._id)} />
       </div>
     </div>
   );

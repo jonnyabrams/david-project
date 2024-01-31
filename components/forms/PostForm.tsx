@@ -32,11 +32,11 @@ import { UploadButton } from "@/lib/uploadthing";
 
 interface PostFormProps {
   type?: string;
-  dbUserId: string;
+  currentUserId: string;
   postDetails?: string;
 }
 
-const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
+const PostForm = ({ type, currentUserId, postDetails }: PostFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tooManyTags, setTooManyTags] = useState(false);
 
@@ -111,7 +111,7 @@ const PostForm = ({ type, dbUserId, postDetails }: PostFormProps) => {
           title: values.title,
           content: values.content,
           tags: values.tags,
-          author: JSON.parse(dbUserId),
+          author: JSON.parse(currentUserId),
           picture: values.picture,
           pdf: values.pdf,
           path: pathname,

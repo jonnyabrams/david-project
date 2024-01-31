@@ -1,16 +1,13 @@
-import { auth } from "@clerk/nextjs";
-
 import PostForm from "@/components/forms/PostForm";
-import { getUserById } from "@/lib/actions/user.action";
 import { getPostById } from "@/lib/actions/post.action";
 import { ParamsProps } from "@/types";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const EditPost = async ({ params }: ParamsProps) => {
-  const { userId } = auth();
+  const currentUser = await useCurrentUser()
 
-  if (!userId) return null;
+  if (!currentUser) return null;
 
-  const dbUser = await getUserById({ userId });
   const post = await getPostById({ postId: params.id });
 
   return (
@@ -20,7 +17,7 @@ const EditPost = async ({ params }: ParamsProps) => {
       <div className="mt-9">
         <PostForm
           type="edit"
-          dbUserId={JSON.stringify(dbUser._id)}
+          currentUserId={JSON.stringify(currentUser._id)}
           postDetails={JSON.stringify(post)}
         />
       </div>

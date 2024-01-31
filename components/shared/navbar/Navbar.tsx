@@ -16,11 +16,11 @@ import NotificationMenu from "./NotificationMenu";
 import { IUser } from "@/models/user.model";
 
 interface NavbarProps {
-  user: IUser;
+  currentUser: IUser;
   knockToken: string | undefined;
 }
 
-const Navbar = async ({ user, knockToken }: NavbarProps) => {
+const Navbar = async ({ currentUser, knockToken }: NavbarProps) => {
   const dropdownMenuItemStyles =
     "cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400";
 
@@ -41,10 +41,10 @@ const Navbar = async ({ user, knockToken }: NavbarProps) => {
 
       <div className="flex-between gap-5">
         <Theme />
-        {user && knockToken && (
+        {currentUser && knockToken && (
           <div className="mr-2">
             <NotificationMenu
-              userId={user._id.toString()}
+              userId={currentUser._id.toString()}
               knockToken={knockToken}
               apiKey={process.env.KNOCK_PUBLIC_API_KEY!}
               feedChannelId={process.env.KNOCK_FEED_CHANNEL_ID!}
@@ -67,7 +67,7 @@ const Navbar = async ({ user, knockToken }: NavbarProps) => {
             <DropdownMenuTrigger className="focus:outline-none">
               <Image
                 src={
-                  user?.picture || "/assets/images/default-profile-picture.png"
+                  currentUser?.picture || "/assets/images/default-profile-picture.png"
                 }
                 width={36}
                 height={36}
@@ -76,10 +76,10 @@ const Navbar = async ({ user, knockToken }: NavbarProps) => {
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="text-dark500_light700 small-regular border-none bg-light-900 focus:outline-none active:outline-none dark:bg-dark-300">
-              <DropdownMenuLabel>{user?.fullName}</DropdownMenuLabel>
+              <DropdownMenuLabel>{currentUser?.fullName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className={dropdownMenuItemStyles}>
-                <Link href={`/profile/${user?.id}`}>Your Profile</Link>
+                <Link href={`/profile/${currentUser?.id}`}>Your Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator>
                 {" "}
