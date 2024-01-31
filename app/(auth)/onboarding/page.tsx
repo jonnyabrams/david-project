@@ -1,15 +1,13 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import ProfileForm from "@/components/forms/ProfileForm";
-import { getUserById } from "@/lib/actions/user.action";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const Onboarding = async () => {
-  const { userId } = auth();
-  if (!userId) return null;
+  const currentUser = await useCurrentUser();
+  if (!currentUser) return null;
 
-  const dbUser = await getUserById({ userId });
-  if (dbUser?.isOnboarded) redirect("/");
+  if (currentUser.isOnboarded) redirect("/");
 
   return (
     <div className="max-xs:mx-10">
@@ -18,7 +16,11 @@ const Onboarding = async () => {
       </h1>
 
       <section className="my-4">
-        <ProfileForm clerkId={userId} user={JSON.stringify(dbUser)} isOnboarding />
+        <ProfileForm
+          clerkId={currentUser.clerkId}
+          user={JSON.stringify(currentUser)}
+          isOnboarding
+        />
       </section>
     </div>
   );
