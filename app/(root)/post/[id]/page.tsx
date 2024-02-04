@@ -13,6 +13,7 @@ import Comments from "@/components/shared/Comments";
 import Likes from "@/components/shared/Likes";
 import EditDeleteAction from "@/components/shared/EditDeleteAction";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import SharePost from "@/components/shared/SharePost";
 
 interface PostProps {
   params: { id: string };
@@ -24,9 +25,8 @@ const Post = async ({ params, searchParams }: PostProps) => {
 
   const currentUser = await useCurrentUser();
 
-  const showActionButtons =
-    currentUser &&
-    currentUser._id.toString() === result?.author._id.toString();
+  const showEditDeleteActions =
+    currentUser && currentUser._id.toString() === result?.author._id.toString();
 
   return (
     <>
@@ -69,13 +69,18 @@ const Post = async ({ params, searchParams }: PostProps) => {
 
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
         <SignedIn>
-          {showActionButtons && (
+          {showEditDeleteActions && (
             <EditDeleteAction
               type="Post"
               itemId={JSON.stringify(result?._id)}
             />
           )}
         </SignedIn>
+        <SharePost
+          postId={params.id}
+          postTitle={result?.title}
+          currentUserName={currentUser.firstName}
+        />
         <Metric
           imgUrl="/assets/icons/clock.svg"
           alt="clock icon"
