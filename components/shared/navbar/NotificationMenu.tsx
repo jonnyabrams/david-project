@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   KnockProvider,
   KnockFeedProvider,
@@ -30,15 +30,13 @@ const NotificationMenu = ({ userId, knockToken, apiKey, feedChannelId }: Notific
     setIsClient(true);
   }, []);
 
-  const memoizedKnockToken = useMemo(() => knockToken, [userId])
-
   return isClient && knockToken ? (
     <KnockProvider
       apiKey={apiKey}
       userId={userId}
       // In production, you must pass a signed userToken
       // and enable enhanced security mode in your Knock dashboard
-      userToken={memoizedKnockToken}
+      userToken={knockToken}
     >
       <KnockFeedProvider
         feedId={feedChannelId}
