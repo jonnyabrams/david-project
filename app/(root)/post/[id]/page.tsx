@@ -79,7 +79,7 @@ const Post = async ({ params, searchParams }: PostProps) => {
         <SharePost
           postId={params.id}
           postTitle={result?.title}
-          currentUserName={currentUser.firstName}
+          currentUserName={currentUser?.firstName}
         />
         <Metric
           imgUrl="/assets/icons/clock.svg"
