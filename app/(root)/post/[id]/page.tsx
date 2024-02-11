@@ -3,6 +3,7 @@ import Link from "next/link";
 import parse from "html-react-parser";
 import { SignedIn } from "@clerk/nextjs";
 import { FileText } from "lucide-react";
+import { redirect } from "next/navigation";
 
 import Metric from "@/components/shared/Metric";
 import { getPostById } from "@/lib/actions/post.action";
@@ -24,6 +25,8 @@ const Post = async ({ params, searchParams }: PostProps) => {
   const result = await getPostById({ postId: params.id });
 
   const currentUser = await useCurrentUser();
+
+  if (!currentUser) redirect("/");
 
   const showEditDeleteActions =
     currentUser && currentUser._id.toString() === result?.author._id.toString();
