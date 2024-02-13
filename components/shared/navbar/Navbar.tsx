@@ -79,7 +79,7 @@ const Navbar = async ({ currentUser, knockToken }: NavbarProps) => {
               <DropdownMenuLabel>{currentUser?.fullName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className={dropdownMenuItemStyles}>
-                <Link href={`/profile/${currentUser?.id}`}>Your Profile</Link>
+                <Link href={`/profile/${currentUser?.clerkId}`}>Your Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator>
                 {" "}
