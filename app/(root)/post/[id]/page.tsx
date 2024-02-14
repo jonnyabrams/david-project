@@ -15,6 +15,7 @@ import Likes from "@/components/shared/Likes";
 import EditDeleteAction from "@/components/shared/EditDeleteAction";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import SharePost from "@/components/shared/SharePost";
+import ReportPost from "@/components/shared/ReportPost";
 
 interface PostProps {
   params: { id: string };
@@ -83,6 +84,12 @@ const Post = async ({ params, searchParams }: PostProps) => {
           postId={params.id}
           postTitle={result?.title}
           currentUserName={currentUser?.firstName}
+        />
+        <ReportPost
+          postId={params.id}
+          postTitle={result?.title}
+          userName={currentUser?.fullName}
+          userEmail={currentUser?.email}
         />
         <Metric
           imgUrl="/assets/icons/clock.svg"

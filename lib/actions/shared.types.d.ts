@@ -159,3 +159,10 @@ export interface FollowUserParams {
   userAlreadyFollows: boolean;
   path: string;
 }
+
+export interface ReportPostEmailParams {
+  postTitle: string;
+  postId: string;
+  userName: string;
+  userEmail: string;
+}
