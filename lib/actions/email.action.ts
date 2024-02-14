@@ -15,7 +15,7 @@ export const reportPost = async (params: ReportPostEmailParams) => {
       from: "onboarding@resend.dev",
       to: [process.env.EMAIL!.toString()],
       subject: `Reported: "${postTitle}"`,
-      html: `<p>${userName}</p> has flagged the post <a href="${process.env.BASE_URL}/post/${postId}">"${postTitle}" for inappropriate content.`,
+      html: `${userName} has flagged the post <a href="${process.env.BASE_URL}/post/${postId}">"${postTitle}"</a> for inappropriate content.`,
     });
   } catch (error) {
     console.error(error);
