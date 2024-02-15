@@ -3,14 +3,14 @@
 
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { ThumbsUp } from "lucide-react";
 
 import { toggleLikePost } from "@/lib/actions/post.action";
 import { formatLargeNumber } from "@/lib/utils";
 import { toggleLikeComment } from "@/lib/actions/comment.action";
 import { toggleSavePost } from "@/lib/actions/user.action";
-import { useEffect } from "react";
 import { viewPost } from "@/lib/actions/interaction.action";
-import { ThumbsUp } from "lucide-react";
 
 interface LikesProps {
   type: string;
