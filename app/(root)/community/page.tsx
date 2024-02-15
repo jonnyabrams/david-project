@@ -1,17 +1,16 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs";
 
 import UserCard from "@/components/cards/UserCard";
 import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { UserFilters } from "@/constants/filters";
-import { getAllUsers, getUserById } from "@/lib/actions/user.action";
+import { getAllUsers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
-  const { userId } = auth();
-  const currentUser = await getUserById({ userId });
+  const currentUser = await useCurrentUser();
 
   const result = await getAllUsers({
     searchQuery: searchParams.q,
