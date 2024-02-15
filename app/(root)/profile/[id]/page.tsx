@@ -20,7 +20,7 @@ const Profile = async ({ params, searchParams }: URLProps) => {
 
   // get logged in user
   const currentUser = await getUserById({userId: clerkId})
-  const userAlreadyFollows = userInfo.user.followers.includes(currentUser._id);
+  const userAlreadyFollows = userInfo.user.followers.includes(currentUser?._id);
 
   return (
     <>
