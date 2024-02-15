@@ -165,7 +165,7 @@ export const toggleLikePost = async (params: PostLikeParams) => {
   try {
     connectToDatabase();
 
-    const { postId, userId, userHasAlreadyLiked, path } = params;
+    const { postId, userId, userHasAlreadyLiked } = params;
 
     let updateQuery = {};
 
@@ -211,8 +211,6 @@ export const toggleLikePost = async (params: PostLikeParams) => {
         },
       });
     }
-
-    revalidatePath(path);
   } catch (error) {
     console.error(error);
     throw error;
