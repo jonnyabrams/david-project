@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { startTransition, useEffect, useOptimistic } from "react";
+import { useEffect } from "react";
 import { ThumbsUp } from "lucide-react";
 
 import { toggleLikePost } from "@/lib/actions/post.action";
@@ -29,11 +29,6 @@ const Likes = ({
   userHasAlreadyLiked,
   userHasSaved,
 }: LikesProps) => {
-  const [optimisticNumberOfLikes, addOptimisticNumberOfLikes] = useOptimistic(
-    numberOfLikes,
-    (state, amount) => state + Number(amount)
-  );
-  
   const pathname = usePathname();
   const router = useRouter();
 
@@ -49,12 +44,6 @@ const Likes = ({
     if (!userId) {
       return;
     }
-
-    startTransition(() => {
-      userHasAlreadyLiked
-        ? addOptimisticNumberOfLikes(-1)
-        : addOptimisticNumberOfLikes(1);
-    });
 
     if (type === "Post") {
       await toggleLikePost({
@@ -99,9 +88,21 @@ const Likes = ({
               className="text-dark200_light800 cursor-pointer"
             />
           )}
+          {/* <Image
+            src={
+              userHasAlreadyLiked
+                ? "/assets/icons/liked.svg"
+                : "/assets/icons/like.svg"
+            }
+            width={18}
+            height={18}
+            alt="like"
+            className="cursor-pointer"
+            onClick={handleLike}
+          /> */}
           <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
             <p className="subtle-medium text-dark400_light900">
-              {formatLargeNumber(optimisticNumberOfLikes)}
+              {formatLargeNumber(numberOfLikes)}
             </p>
           </div>
         </div>
