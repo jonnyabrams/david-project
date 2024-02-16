@@ -92,7 +92,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
                 views={post.views}
                 comments={post.comments}
                 createdAt={post.createdAt}
-                clerkId={post.clerkId}
+                currentUserClerkId={post.clerkId}
                 content={post.content}
               />
             ))

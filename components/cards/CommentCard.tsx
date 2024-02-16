@@ -7,7 +7,7 @@ import Metric from '../shared/Metric';
 import EditDeleteAction from '../shared/EditDeleteAction';
 
 interface CommentCardProps {
-  clerkId?: string | null;
+  currentUserClerkId?: string | null;
   _id: string;
   post: {
     _id: string;
@@ -23,14 +23,14 @@ interface CommentCardProps {
   createdAt: Date;
 }
 const CommentCard = ({
-  clerkId,
+  currentUserClerkId,
   _id,
   post,
   author,
   numberOfLikes,
   createdAt
 }: CommentCardProps) => {
-  const showActionButtons = clerkId && clerkId === author.clerkId;
+  const showActionButtons = currentUserClerkId && currentUserClerkId === author.clerkId;
 
   return (
     <div className="card-wrapper rounded-[10px] px-11 py-9">

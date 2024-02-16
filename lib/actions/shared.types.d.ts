@@ -124,7 +124,7 @@ export interface GetPostsByTagIdParams {
 }
 
 export interface GetUserStatsParams {
-  userId: string;
+  profileUserId: string;
   page?: number;
   limit?: number;
 }

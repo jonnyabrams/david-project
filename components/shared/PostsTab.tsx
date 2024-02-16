@@ -3,16 +3,18 @@ import PostCard from "../cards/PostCard";
 import Pagination from "./Pagination";
 
 interface PostsTabProps {
-  userId: string;
-  clerkId?: string | null;
+  profileUserId: string;
+  currentUserClerkId?: string | null;
   searchProps?: { [key: string]: string | undefined };
 }
 
-const PostsTab = async ({ searchProps, userId, clerkId }: PostsTabProps) => {
+const PostsTab = async ({ searchProps, profileUserId, currentUserClerkId }: PostsTabProps) => {
   const result = await getUserPosts({
-    userId,
+    profileUserId,
     page: searchProps?.page ? +searchProps.page : 1,
   });
+
+  console.log(result)
 
   return (
     <>
@@ -27,7 +29,7 @@ const PostsTab = async ({ searchProps, userId, clerkId }: PostsTabProps) => {
           views={post.views}
           comments={post.comments}
           createdAt={post.createdAt}
-          clerkId={clerkId}
+          currentUserClerkId={currentUserClerkId}
           content={post.content}
         />
       ))}

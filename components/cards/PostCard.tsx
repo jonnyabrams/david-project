@@ -29,7 +29,7 @@ interface PostCardProps {
   views: number;
   comments: Array<object>;
   createdAt: Date;
-  clerkId?: string | null;
+  currentUserClerkId?: string | null;
   content: string;
 }
 
@@ -42,10 +42,10 @@ const PostCard = async ({
   views,
   comments,
   createdAt,
-  clerkId,
+  currentUserClerkId,
   content,
 }: PostCardProps) => {
-  const showActionButtons = clerkId && clerkId === author.clerkId;
+  const showActionButtons = currentUserClerkId && currentUserClerkId === author.clerkId;
 
   return (
     <div className="card-wrapper rounded-[10px] p-9 sm:px-11">

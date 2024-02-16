@@ -3,18 +3,18 @@ import CommentCard from "../cards/CommentCard";
 import Pagination from "./Pagination";
 
 interface CommentsTabProps {
-  userId: string;
-  clerkId?: string | null;
+  profileUserId: string;
+  currentUserClerkId?: string | null;
   searchProps?: { [key: string]: string | undefined };
 }
 
 const CommentsTab = async ({
   searchProps,
-  userId,
-  clerkId,
+  profileUserId,
+  currentUserClerkId,
 }: CommentsTabProps) => {
   const result = await getUserComments({
-    userId,
+    profileUserId,
     page: searchProps?.page ? +searchProps.page : 1,
   });
 
@@ -23,7 +23,7 @@ const CommentsTab = async ({
       {result.comments.map((comment) => (
         <CommentCard
           key={comment._id}
-          clerkId={clerkId}
+          currentUserClerkId={currentUserClerkId}
           _id={comment._id}
           post={comment.post}
           author={comment.author}

@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { SignedIn, auth } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 import Link from "next/link";
 
-import { getUserById, getUserInfo } from "@/lib/actions/user.action";
+import { getUserInfo } from "@/lib/actions/user.action";
 import { URLProps } from "@/types";
 import { getFullName, getJoinedDate, getUserLabel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,14 +12,13 @@ import Stats from "@/components/shared/Stats";
 import PostsTab from "@/components/shared/PostsTab";
 import CommentsTab from "@/components/shared/CommentsTab";
 import FollowButton from "@/components/shared/FollowButton";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 const Profile = async ({ params, searchParams }: URLProps) => {
-  const { userId: clerkId } = auth();
+  const currentUser = await useCurrentUser();
   // get info about user whose profile it is
   const userInfo = await getUserInfo({ userId: params.id });
 
-  // get logged in user
-  const currentUser = await getUserById({userId: clerkId})
   const userAlreadyFollows = userInfo.user.followers.includes(currentUser?._id);
 
   return (
@@ -74,7 +73,7 @@ const Profile = async ({ params, searchParams }: URLProps) => {
 
         <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
           <SignedIn>
-            {clerkId === userInfo?.user.clerkId ? (
+            {currentUser?.clerkId === userInfo?.user.clerkId ? (
               <Link href="/profile/edit">
                 <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
                   Edit Profile
@@ -82,7 +81,7 @@ const Profile = async ({ params, searchParams }: URLProps) => {
               </Link>
             ) : (
               <FollowButton
-                followingUserId={clerkId}
+                followingUserId={currentUser?.clerkId}
                 followedUserId={params.id}
                 userAlreadyFollows={userAlreadyFollows}
               />
@@ -111,15 +110,15 @@ const Profile = async ({ params, searchParams }: URLProps) => {
           <TabsContent value="top-posts">
             <PostsTab
               searchProps={searchParams}
-              userId={userInfo?.user._id}
-              clerkId={clerkId}
+              profileUserId={userInfo?.user._id}
+              currentUserClerkId={currentUser?.clerkId}
             />
           </TabsContent>
           <TabsContent value="comments" className="flex w-full flex-col gap-6">
             <CommentsTab
               searchProps={searchParams}
-              userId={userInfo?.user._id}
-              clerkId={clerkId}
+              profileUserId={userInfo?.user._id}
+              currentUserClerkId={currentUser?.clerkId}
             />
           </TabsContent>
         </Tabs>

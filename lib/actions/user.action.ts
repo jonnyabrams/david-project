@@ -384,13 +384,13 @@ export const getUserPosts = async (params: GetUserStatsParams) => {
   try {
     connectToDatabase();
 
-    const { userId, page = 1, limit = 10 } = params;
+    const { profileUserId, page = 1, limit = 10 } = params;
 
     const skipAmount = (page - 1) * limit;
 
-    const totalPosts = await Post.countDocuments({ author: userId });
+    const totalPosts = await Post.countDocuments({ author: profileUserId });
 
-    const userPosts = await Post.find({ author: userId })
+    const userPosts = await Post.find({ author: profileUserId })
       .sort({ createdAt: -1, views: -1, likes: -1 })
       .skip(skipAmount)
       .limit(limit)
@@ -410,13 +410,13 @@ export const getUserComments = async (params: GetUserStatsParams) => {
   try {
     connectToDatabase();
 
-    const { userId, page = 1, limit = 10 } = params;
+    const { profileUserId, page = 1, limit = 10 } = params;
 
     const skipAmount = (page - 1) * limit;
 
-    const totalComments = await Comment.countDocuments({ author: userId });
+    const totalComments = await Comment.countDocuments({ author: profileUserId });
 
-    const userComments = await Comment.find({ author: userId })
+    const userComments = await Comment.find({ author: profileUserId })
       .sort({ likes: -1 })
       .skip(skipAmount)
       .limit(limit)
