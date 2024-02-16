@@ -8,11 +8,12 @@ import { getSavedPosts } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import { redirect } from "next/navigation";
 
 const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();
 
-  if (!userId) return null;
+  if (!userId) redirect("/");
 
   const result = await getSavedPosts({
     clerkId: userId,
@@ -54,7 +55,7 @@ const SavedPosts = async ({ searchParams }: SearchParamsProps) => {
               views={post.views}
               comments={post.comments}
               createdAt={post.createdAt}
-              clerkId={post.clerkId}
+              currentUserClerkId={userId}
               content={post.content}
             />
           ))

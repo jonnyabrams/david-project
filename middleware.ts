@@ -8,6 +8,7 @@ export default authMiddleware({
     "/tags",
     "/tags/:id",
     "/profile/:id",
+    "/saved-posts",
     "/community",
     "/api/uploadthing"
   ],
